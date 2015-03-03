@@ -7,6 +7,7 @@ package ru.mvk.videoGuide.javafx.field;
 import javafx.scene.Parent;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.junit.Assert;
@@ -52,6 +53,66 @@ public class DurationFieldUITests extends UITests<DurationField> {
     @Nullable Integer fieldValue = fieldValueTester.getValue();
     Assert.assertEquals("input natural number should set correct value", expectedValue,
         fieldValue);
+  }
+
+  @Test
+  public void setFieldValue_NoHours_ShouldSetCorrectValue() {
+    @NotNull DurationField field = safeFindById(ID);
+    @NotNull Integer expectedValue = 13 * SECONDS_IN_MINUTE + 3;
+    field.setFieldValue(expectedValue);
+    @NotNull String fieldText = field.getText();
+    @NotNull String fieldFilteredText = StringUtils.remove(fieldText, ':');
+    @NotNull Integer value = restoreValue(fieldFilteredText);
+    Assert.assertEquals("setFieldValue should set correct value, when seconds count is " +
+        "one-digit", expectedValue, value);
+  }
+
+  @Test
+  public void setFieldValue_NoHoursAndMinutes_ShouldSetCorrectValue() {
+    @NotNull DurationField field = safeFindById(ID);
+    @NotNull Integer expectedValue = 3;
+    field.setFieldValue(expectedValue);
+    @NotNull String fieldText = field.getText();
+    @NotNull String fieldFilteredText = StringUtils.remove(fieldText, ':');
+    @NotNull Integer value = restoreValue(fieldFilteredText);
+    Assert.assertEquals("setFieldValue should set correct value, when seconds count is " +
+        "one-digit", expectedValue, value);
+  }
+
+  @Test
+  public void setFieldValue_OneDigitSeconds_ShouldSetCorrectValue() {
+    @NotNull DurationField field = safeFindById(ID);
+    @NotNull Integer expectedValue = 10 * SECONDS_IN_HOUR + 13 * SECONDS_IN_MINUTE + 3;
+    field.setFieldValue(expectedValue);
+    @NotNull String fieldText = field.getText();
+    @NotNull String fieldFilteredText = StringUtils.remove(fieldText, ':');
+    @NotNull Integer value = restoreValue(fieldFilteredText);
+    Assert.assertEquals("setFieldValue should set correct value, when seconds count is " +
+            "one-digit", expectedValue, value);
+  }
+
+  @Test
+  public void setFieldValue_OneDigitMinutes_ShouldSetCorrectValue() {
+    @NotNull DurationField field = safeFindById(ID);
+    @NotNull Integer expectedValue = 54 * SECONDS_IN_HOUR + 7 * SECONDS_IN_MINUTE + 23;
+    field.setFieldValue(expectedValue);
+    @NotNull String fieldText = field.getText();
+    @NotNull String fieldFilteredText = StringUtils.remove(fieldText, ':');
+    @NotNull Integer value = restoreValue(fieldFilteredText);
+    Assert.assertEquals("setFieldValue should set correct value, when minutes count is " +
+        "one-digit", expectedValue, value);
+  }
+
+  @Test
+  public void setFieldValue_OneDigitHours_ShouldSetCorrectValue() {
+    @NotNull DurationField field = safeFindById(ID);
+    @NotNull Integer expectedValue = 3 * SECONDS_IN_HOUR + 42 * SECONDS_IN_MINUTE + 23;
+    field.setFieldValue(expectedValue);
+    @NotNull String fieldText = field.getText();
+    @NotNull String fieldFilteredText = StringUtils.remove(fieldText, ':');
+    @NotNull Integer value = restoreValue(fieldFilteredText);
+    Assert.assertEquals("setFieldValue should set correct value, when hours count is " +
+        "one-digit", expectedValue, value);
   }
 
   @Test
