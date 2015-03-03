@@ -6,11 +6,15 @@ package ru.mvk.videoGuide.javafx.field;
 
 import javafx.scene.control.TextField;
 import javafx.scene.text.Font;
+import ru.mvk.videoGuide.exception.VideoGuideRuntimeException;
 
 abstract class BasicSizedTextField extends TextField {
   private final int maxLength;
 
   BasicSizedTextField(int maxLength) {
+    if (maxLength <= 0) {
+      throw new VideoGuideRuntimeException("BasicSizedTextField: non-positive width");
+    }
     this.maxLength = maxLength;
     // force length = 4 for too short fields
     if (maxLength > 4) {

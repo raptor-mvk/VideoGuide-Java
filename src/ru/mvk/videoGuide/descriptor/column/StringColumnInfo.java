@@ -5,6 +5,7 @@
 package ru.mvk.videoGuide.descriptor.column;
 
 import org.jetbrains.annotations.NotNull;
+import ru.mvk.videoGuide.exception.VideoGuideRuntimeException;
 
 public class StringColumnInfo implements ColumnInfo {
   @NotNull
@@ -12,6 +13,9 @@ public class StringColumnInfo implements ColumnInfo {
   private final int width;
 
   public StringColumnInfo(@NotNull String name, int width) {
+    if (width <= 0) {
+      throw new VideoGuideRuntimeException("StringColumnInfo: non-positive width");
+    }
     this.name = name;
     this.width = width;
   }

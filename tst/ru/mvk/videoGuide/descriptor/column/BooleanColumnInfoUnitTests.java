@@ -7,6 +7,7 @@ package ru.mvk.videoGuide.descriptor.column;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Assert;
 import org.junit.Test;
+import ru.mvk.videoGuide.exception.VideoGuideRuntimeException;
 
 public class BooleanColumnInfoUnitTests {
   @Test
@@ -25,6 +26,16 @@ public class BooleanColumnInfoUnitTests {
     int columnWidth = booleanColumnInfo.getWidth();
     Assert.assertEquals("constructor should set correct value of 'width'", width,
         columnWidth);
+  }
+
+  @Test(expected = VideoGuideRuntimeException.class)
+  public void constructor_ZeroWidth_ShouldThrowVideoGuideRuntimeException() {
+    new BooleanColumnInfo("zero", 0);
+  }
+
+  @Test(expected = VideoGuideRuntimeException.class)
+  public void constructor_NegativeWidth_ShouldThrowVideoGuideRuntimeException() {
+    new BooleanColumnInfo("negative", -43);
   }
 
   @Test
