@@ -107,10 +107,6 @@ abstract class MaskedTextField extends BasicSizedTextField {
     });
   }
 
-  private void setMouseClickedListener() {
-    setOnMouseClicked((event) -> moveCaretHome());
-  }
-
   private void setKeyPressedListener() {
     setOnKeyPressed((event) -> {
       @NotNull KeyCode keyCode = event.getCode();
@@ -240,7 +236,9 @@ abstract class MaskedTextField extends BasicSizedTextField {
       value.setCharAt(position, currentDigit);
     }
     @NotNull String text = value.toString();
+    int caretPosition = getCaretPosition();
     setText(text);
+    positionCaret(caretPosition);
   }
 
   @NotNull
