@@ -5,6 +5,7 @@
 package ru.mvk.videoGuide.javafx.field;
 
 import javafx.beans.property.ReadOnlyBooleanProperty;
+import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import org.jetbrains.annotations.NotNull;
@@ -86,22 +87,22 @@ abstract class MaskedTextField extends BasicSizedTextField {
   }
 
   private void setListeners() {
-    setFocusedListener();
-    setMouseClickedListener();
+    setSelectionListener();
     setKeyPressedListener();
     setKeyTypedListener();
     setKeyReleasedListener();
   }
 
-  private void setFocusedListener() {
-    @Nullable ReadOnlyBooleanProperty focusedProperty = focusedProperty();
-    if (focusedProperty == null) {
-      throw new VideoGuideRuntimeException("MaskedTextField: focusedProperty is null");
+  private void setSelectionListener() {
+    @Nullable ReadOnlyObjectProperty selectionProperty = selectionProperty();
+    if (selectionProperty == null) {
+      throw new VideoGuideRuntimeException("MaskedTextField: selectionProperty is null");
     }
-    focusedProperty.addListener((observableValue, oldPropertyValue,
-                                 newPropertyValue) -> {
-      if (newPropertyValue) {
-        moveCaretHome();
+    selectionProperty().addListener((observableValue, oldPropertyValue,
+                                     newPropertyValue) -> {
+      if (newPropertyValue.getLength() > 1) {
+        int selectionStart = newPropertyValue.getStart();
+        selectRange(selectionStart, selectionStart + 1);
       }
     });
   }

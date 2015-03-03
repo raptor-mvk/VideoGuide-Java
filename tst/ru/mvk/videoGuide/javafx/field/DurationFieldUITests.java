@@ -5,6 +5,7 @@
 package ru.mvk.videoGuide.javafx.field;
 
 import javafx.scene.Parent;
+import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -26,6 +27,22 @@ public class DurationFieldUITests extends UITests<DurationField> {
   private static final String DEFAULT_VALUE = MASK.replace('#', '0');
   @NotNull
   private final FieldValueTester<Integer> fieldValueTester = new FieldValueTester<>();
+
+  @Test
+  public void focus_ShouldSelectFirstDigit() {
+    @NotNull TextField field = safeFindById(ID);
+    runAndWait(field::requestFocus);
+    int selectionStart = field.getSelection().getStart();
+    Assert.assertEquals("focus should select first digit", 0, selectionStart);
+  }
+
+  @Test
+  public void focus_ShouldSelectSingleDigit() {
+    @NotNull TextField field = safeFindById(ID);
+    runAndWait(field::requestFocus);
+    int selectionLength = field.getSelection().getLength();
+    Assert.assertEquals("focus should select single digit", 1, selectionLength);
+  }
 
   @Test
   public void input_ShouldSetValue() {
