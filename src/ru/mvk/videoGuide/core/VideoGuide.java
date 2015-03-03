@@ -114,8 +114,8 @@ public class VideoGuide extends Application {
     listViewInfo.addColumnInfo("size", new FileSizeColumnInfo("Размер", 8));
     listViewInfo.addColumnInfo("disc", new StringColumnInfo("Диск", 4));
     listViewInfo.addColumnInfo("filesCount", new StringColumnInfo("Файлов", 6));
-    listViewInfo.addColumnInfo("averageSize", new StringColumnInfo("Ср. длит", 10));
-    listViewInfo.addColumnInfo("averageLength", new StringColumnInfo("Ср. размер", 10));
+    listViewInfo.addColumnInfo("averageLength", new DurationColumnInfo("Ср. длит.", 10));
+    listViewInfo.addColumnInfo("averageSize", new FileSizeColumnInfo("Ср. размер", 10));
     return listViewInfo;
   }
 
