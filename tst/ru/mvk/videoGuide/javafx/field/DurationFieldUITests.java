@@ -80,7 +80,7 @@ public class DurationFieldUITests extends UITests<DurationField> {
     @NotNull TextField field = safeFindById(ID);
     // coordinates and caret position are empirically determined
     int expectedCaretPosition = 6;
-    move('#' + ID).moveBy(2.5, 0.0).click();
+    safeMoveById(ID).moveBy(2.5, 0.0).click();
     int selectionStart = field.getSelection().getStart();
     Assert.assertEquals("mouse click on digit position should select corresponding digit",
         expectedCaretPosition, selectionStart);
@@ -91,7 +91,7 @@ public class DurationFieldUITests extends UITests<DurationField> {
     @NotNull TextField field = safeFindById(ID);
     int expectedCaretPosition = 7;
     // coordinates are empirically determined
-    move('#' + ID).moveBy(23.0, 0.0).click();
+    safeMoveById(ID).moveBy(23.0, 0.0).click();
     int selectionStart = field.getSelection().getStart();
     Assert.assertEquals("mouse click righter than last digit should select last digit",
         expectedCaretPosition, selectionStart);
@@ -102,7 +102,7 @@ public class DurationFieldUITests extends UITests<DurationField> {
     @NotNull TextField field = safeFindById(ID);
     int expectedCaretPosition = 0;
     // coordinates are empirically determined
-    move('#' + ID).moveBy(-32.0, 0.0).click();
+    safeMoveById(ID).moveBy(-32.0, 0.0).click();
     int selectionStart = field.getSelection().getStart();
     Assert.assertEquals("mouse click righter than last digit should select first digit",
         expectedCaretPosition, selectionStart);

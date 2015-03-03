@@ -10,7 +10,7 @@ import ru.mvk.videoGuide.model.Film;
 import ru.mvk.videoGuide.view.ListView;
 import ru.mvk.videoGuide.view.View;
 
-public class FilmViewService extends SimpleViewService<Film> {
+public class FilmViewService extends ViewServiceImpl<Film> {
   public FilmViewService(@NotNull Dao<Film, ?> dao, @NotNull View<Film> view,
                          @NotNull ListView<Film> listView) {
     super(dao, view, listView);

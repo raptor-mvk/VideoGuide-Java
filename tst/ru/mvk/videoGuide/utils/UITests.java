@@ -316,6 +316,15 @@ public abstract class UITests<Type> extends GuiTest {
   }
 
   @NotNull
+  protected final GuiTest safeMoveById(@NotNull String id) {
+    @Nullable GuiTest result = move('#' + id);
+    if (result == null) {
+      throw new RuntimeException("Click result is null");
+    }
+    return result;
+  }
+
+  @NotNull
   protected final GuiTest safeClickById(@NotNull String id) {
     @Nullable GuiTest result = click('#' + id);
     if (result == null) {

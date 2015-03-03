@@ -16,7 +16,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.function.Consumer;
 
-public class SimpleViewService<EntityType> implements ViewService<EntityType> {
+public class ViewServiceImpl<EntityType> implements ViewService<EntityType> {
   @NotNull
   private final Class<EntityType> entityType;
   @NotNull
@@ -33,8 +33,8 @@ public class SimpleViewService<EntityType> implements ViewService<EntityType> {
   };
 
 
-  SimpleViewService(@NotNull Dao<EntityType, ?> dao, @NotNull View<EntityType> view,
-                    @NotNull ListView<EntityType> listView) {
+  ViewServiceImpl(@NotNull Dao<EntityType, ?> dao, @NotNull View<EntityType> view,
+                  @NotNull ListView<EntityType> listView) {
     entityType = dao.getEntityType();
     this.dao = dao;
     this.view = view;

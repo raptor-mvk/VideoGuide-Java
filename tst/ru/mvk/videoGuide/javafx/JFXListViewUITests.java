@@ -478,6 +478,29 @@ public class JFXListViewUITests extends UITests<ListView<Student>> {
         false, removeButtonWasClicked);
   }
 
+  @Test
+  public void doubleClick_ShouldCallEditButtonHandler() {
+    @NotNull ListView<Student> listView = getObjectUnderTest();
+    editButtonState.setValue(false);
+    runAndWait(() -> listView.selectRow(1));
+    @NotNull String tableId = listView.getTableId();
+    safeMoveById(tableId).doubleClick();
+    @Nullable Boolean editButtonWasClicked = editButtonState.getValue();
+    Assert.assertEquals("enter key button should execute editButtonHandler", true,
+        editButtonWasClicked);
+  }
+
+  @Test
+  public void doubleClick_noSelection_ShouldDoNothing() {
+    @NotNull ListView<Student> listView = getObjectUnderTest();
+    runAndWait(listView::clearSelection);
+    editButtonState.setValue(false);
+    @NotNull String tableId = listView.getTableId();
+    safeMoveById(tableId).doubleClick();
+    @Nullable Boolean editButtonWasClicked = editButtonState.getValue();
+    Assert.assertEquals("enter key button should do nothing, when there is no selection",
+        false, editButtonWasClicked);
+  }
 
   @NotNull
   @Override

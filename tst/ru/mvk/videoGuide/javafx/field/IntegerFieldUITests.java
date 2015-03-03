@@ -124,9 +124,7 @@ public class IntegerFieldUITests extends UITests<IntegerField<?>> {
   @Test
   public void inputIntoFilledField_ShouldNotMoveCaret() {
     @NotNull String inputText = "-89267458";
-    safeClickById(ID).type(inputText);
-    type(KeyCode.HOME);
-    type("1");
+    safeClickById(ID).type(inputText).type(KeyCode.HOME).type("1");
     @NotNull TextField field = safeFindById(ID);
     int caretPosition = field.getCaretPosition();
     Assert.assertEquals("input into filled field should not move caret", 0,

@@ -73,6 +73,7 @@ public class JFXListView<EntityType> implements ListView<EntityType> {
     tableView = new TableView<>();
     gridPane = prepareGridPane();
     prepareTableView();
+    setMouseListener();
     setKeyPressedListener();
     setKeyReleasedListener();
   }
@@ -172,6 +173,14 @@ public class JFXListView<EntityType> implements ListView<EntityType> {
   @Override
   public void clearSelection() {
     selectRow(-1);
+  }
+
+  private void setMouseListener() {
+    tableView.setOnMouseClicked((event) -> {
+      if(event.getClickCount() == 2) {
+        runEditButtonHandler();
+      }
+    });
   }
 
   private void setKeyPressedListener() {

@@ -85,7 +85,7 @@ public class VideoGuide extends Application {
   @Override
   public void start(Stage primaryStage) throws Exception {
     filmViewService.showListView();
-    primaryStage.setScene(new Scene(root, 820, 500));
+    primaryStage.setScene(new Scene(root, 850, 440));
     primaryStage.setResizable(false);
     primaryStage.show();
   }
@@ -112,8 +112,8 @@ public class VideoGuide extends Application {
     listViewInfo.addColumnInfo("name", new StringColumnInfo("Название", 50));
     listViewInfo.addColumnInfo("length", new DurationColumnInfo("Длит.", 8));
     listViewInfo.addColumnInfo("size", new FileSizeColumnInfo("Размер", 8));
-    listViewInfo.addColumnInfo("disc", new StringColumnInfo("Диск", 4));
-    listViewInfo.addColumnInfo("filesCount", new StringColumnInfo("Файлов", 6));
+    listViewInfo.addColumnInfo("disc", new StringColumnInfo("Диск", 5));
+    listViewInfo.addColumnInfo("filesCount", new StringColumnInfo("Файлов", 7));
     listViewInfo.addColumnInfo("averageLength", new DurationColumnInfo("Ср. длит.", 10));
     listViewInfo.addColumnInfo("averageSize", new FileSizeColumnInfo("Ср. размер", 10));
     return listViewInfo;
