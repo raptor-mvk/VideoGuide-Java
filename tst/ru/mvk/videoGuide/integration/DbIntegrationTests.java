@@ -1,0 +1,337 @@
+/**
+ * (c) raptor_MVK, 2015. All rights reserved.
+ */
+
+package ru.mvk.videoGuide.integration;
+
+import org.hibernate.SessionFactory;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.junit.Assert;
+import org.junit.Test;
+import ru.mvk.videoGuide.dao.Dao;
+import ru.mvk.videoGuide.dao.DaoImpl;
+import ru.mvk.videoGuide.dao.TestObject;
+import ru.mvk.videoGuide.module.db.DbController;
+import ru.mvk.videoGuide.module.db.HibernateAdapter;
+import ru.mvk.videoGuide.utils.SQLiteHelper;
+import ru.mvk.videoGuide.utils.SQLiteTestDbController;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
+public class DbIntegrationTests {
+  @NotNull
+  private final String DB_FILENAME = "db.sqlite";
+  private final int APP_ID = 0x002d2514;
+  private final int APP_DB_VERSION = 3;
+  @NotNull
+  private SQLiteHelper sqLiteHelper = new SQLiteHelper();
+  @NotNull
+  private SessionFactory sessionFactory = sqLiteHelper.prepareSessionFactory(DB_FILENAME);
+  @NotNull
+  private HibernateAdapter hibernateAdapter = new HibernateAdapter(sessionFactory);
+
+  @Test
+  public void simpleDaoCreate_ShouldCreateDatabaseEntry() {
+    try {
+      @NotNull Dao<TestObject, Long> dao =
+          new DaoImpl<>(TestObject.class, Long.class, hibernateAdapter);
+      @NotNull String expectedName = "Test";
+      prepareDb();
+      @NotNull TestObject expectedTestObject = new TestObject(expectedName);
+      @NotNull Long id = dao.create(expectedTestObject);
+      @Nullable String name = getTestObjectName(id);
+      Assert.assertEquals("create() should create database entry", expectedName,
+          name);
+    } finally {
+      sqLiteHelper.removeDbFile(sessionFactory, DB_FILENAME);
+    }
+  }
+
+  @Test
+  public void simpleDaoRead_ShouldReturnDatabaseEntry() {
+    try {
+      @NotNull Dao<TestObject, Long> dao =
+          new DaoImpl<>(TestObject.class, Long.class, hibernateAdapter);
+      @NotNull String expectedName = "Test";
+      @NotNull long expectedId = 4;
+      @NotNull TestObject expectedTestObject = new TestObject(expectedId, expectedName);
+      prepareDb();
+      putTestObject(expectedTestObject);
+      @Nullable TestObject testObject = dao.read(expectedId);
+      Assert.assertEquals("read() should return database entry", expectedTestObject,
+          testObject);
+    } finally {
+      sqLiteHelper.removeDbFile(sessionFactory, DB_FILENAME);
+    }
+  }
+
+  @Test
+  public void simpleDaoRead_WrongId_ShouldReturnNull() {
+    try {
+      @NotNull Dao<TestObject, Long> dao =
+          new DaoImpl<>(TestObject.class, Long.class, hibernateAdapter);
+      prepareDb();
+      @Nullable TestObject testObject = dao.read(3L);
+      Assert.assertNull("read() should return null, when no entry found", testObject);
+    } finally {
+      sqLiteHelper.removeDbFile(sessionFactory, DB_FILENAME);
+    }
+  }
+
+  @Test
+  public void simpleDaoUpdate_ShouldUpdateDatabaseEntry() {
+    try {
+      @NotNull Dao<TestObject, Long> dao =
+          new DaoImpl<>(TestObject.class, Long.class, hibernateAdapter);
+      long expectedId = 2L;
+      @NotNull String expectedName = "result";
+      @NotNull TestObject expectedTestObject = new TestObject(expectedId, expectedName);
+      prepareDbWithTestObject(expectedId);
+      dao.update(expectedTestObject);
+      @Nullable String name = getTestObjectName(expectedId);
+      Assert.assertEquals("update() should update database entry", expectedName, name);
+    } finally {
+      sqLiteHelper.removeDbFile(sessionFactory, DB_FILENAME);
+    }
+  }
+
+  @Test
+  public void simpleDaoUpdate_NoEntry_ShouldNotCreateDatabaseEntry() {
+    try {
+      @NotNull Dao<TestObject, Long> dao =
+          new DaoImpl<>(TestObject.class, Long.class, hibernateAdapter);
+      long expectedId = 2L;
+      @NotNull TestObject expectedTestObject = new TestObject(expectedId, "wrong");
+      prepareDb();
+      dao.update(expectedTestObject);
+      @Nullable String name = getTestObjectName(expectedId);
+      Assert.assertNull("update() should not create database entry for new entity",
+          name);
+    } finally {
+      sqLiteHelper.removeDbFile(sessionFactory, DB_FILENAME);
+    }
+  }
+
+  @Test
+  public void simpleDaoDelete_ShouldDeleteDatabaseEntry() {
+    try {
+      @NotNull Dao<TestObject, Long> dao =
+          new DaoImpl<>(TestObject.class, Long.class, hibernateAdapter);
+      long expectedId = 2L;
+      @NotNull TestObject expectedTestObject = new TestObject(expectedId, "entity");
+      prepareDbWithTestObject(expectedId);
+      dao.delete(expectedTestObject);
+      @Nullable String name = getTestObjectName(expectedId);
+      Assert.assertNull("delete() should delete database entry", name);
+    } finally {
+      sqLiteHelper.removeDbFile(sessionFactory, DB_FILENAME);
+    }
+  }
+
+  @Test
+  public void simpleDaoDelete_WrongEntity_ShouldNotThrowException() {
+    boolean exceptionCaught = false;
+    try {
+      @NotNull Dao<TestObject, Long> dao =
+          new DaoImpl<>(TestObject.class, Long.class, hibernateAdapter);
+      long expectedId = 2L;
+      @NotNull TestObject expectedTestObject = new TestObject(expectedId, "entity");
+      prepareDb();
+      dao.delete(expectedTestObject);
+    } catch (Throwable e) {
+      exceptionCaught = true;
+    } finally {
+      sqLiteHelper.removeDbFile(sessionFactory, DB_FILENAME);
+    }
+    Assert.assertFalse("delete() should not throw any exception, when entity was not " +
+        "found in the database", exceptionCaught);
+  }
+
+  @Test
+  public void simpleDaoList_ShouldReturnAllEntries() {
+    try {
+      @NotNull Dao<TestObject, Long> dao =
+          new DaoImpl<>(TestObject.class, Long.class, hibernateAdapter);
+      @NotNull List<TestObject> expectedList = prepareList();
+      prepareDbWithTestObjectList(expectedList);
+      @NotNull List<TestObject> list = dao.list();
+      boolean listsAreEqual = expectedList.size() == list.size() &&
+          expectedList.containsAll(list) && list.containsAll(expectedList);
+      Assert.assertTrue("list() should return all database entries", listsAreEqual);
+    } finally {
+      sqLiteHelper.removeDbFile(sessionFactory, DB_FILENAME);
+    }
+  }
+
+  @Test
+  public void dbControllerIsDbSuitable_NoDb_ShouldReturnFalse() {
+    @NotNull DbController dbController =
+        new SQLiteTestDbController(hibernateAdapter, APP_ID, APP_DB_VERSION);
+    try {
+      boolean result = dbController.isDbSuitable();
+      Assert.assertFalse("isDbSuitable() should return false, when appId is incorrect",
+          result);
+    } finally {
+      sqLiteHelper.removeDbFile(sessionFactory, DB_FILENAME);
+    }
+  }
+
+  @Test
+  public void dbControllerIsDbSuitable_ShouldReturnTrueWhenAppIdIsCorrect() {
+    @NotNull DbController dbController =
+        new SQLiteTestDbController(hibernateAdapter, APP_ID, APP_DB_VERSION);
+    prepareDbWithServiceInfo(APP_ID, APP_DB_VERSION);
+    try {
+      boolean result = dbController.isDbSuitable();
+      Assert.assertTrue("isDbSuitable() should return true, when appId is correct",
+          result);
+    } finally {
+      sqLiteHelper.removeDbFile(sessionFactory, DB_FILENAME);
+    }
+  }
+
+  @Test
+  public void dbControllerGetDbVersion_NoDb_ShouldReturnZero() {
+    @NotNull DbController dbController =
+        new SQLiteTestDbController(hibernateAdapter, APP_ID, APP_DB_VERSION);
+    try {
+      int dbVersion = dbController.getDbVersion();
+      Assert.assertEquals("getDbVersion() should zero, when db is new", 0, dbVersion);
+    } finally {
+      sqLiteHelper.removeDbFile(sessionFactory, DB_FILENAME);
+    }
+  }
+
+  @Test
+  public void dbControllerGetDbVersion_ShouldReturnCorrectDbVersion() {
+    @NotNull DbController dbController =
+        new SQLiteTestDbController(hibernateAdapter, APP_ID, APP_DB_VERSION);
+    prepareDbWithServiceInfo(APP_ID, APP_DB_VERSION);
+    try {
+      int dbVersion = dbController.getDbVersion();
+      Assert.assertEquals("getDbVersion() should correct database version",
+          APP_DB_VERSION, dbVersion);
+    } finally {
+      sqLiteHelper.removeDbFile(sessionFactory, DB_FILENAME);
+    }
+  }
+
+  @Test
+  public void dbControllerUpdateDb_ShouldSetDbVersionValueToAppDbVersion() {
+    try {
+      @NotNull DbController dbController =
+          new SQLiteTestDbController(hibernateAdapter, APP_ID, APP_DB_VERSION);
+      prepareDbWithServiceInfo(APP_ID, 0);
+      dbController.updateDb();
+      int dbVersion = dbController.getDbVersion();
+      Assert.assertEquals("updateDb() should set dbVersion value to appDbVersion",
+          APP_DB_VERSION, dbVersion);
+    } finally {
+      sqLiteHelper.removeDbFile(sessionFactory, DB_FILENAME);
+    }
+  }
+
+  @Test
+  public void createDb_ShouldSetDbVersionValueToAppDbVersion() {
+    try {
+      @NotNull DbController dbController =
+          new SQLiteTestDbController(hibernateAdapter, APP_ID, APP_DB_VERSION);
+      dbController.createDb();
+      int dbVersion = dbController.getDbVersion();
+      Assert.assertEquals("createDb() should set dbVersion value to appDbVersion",
+          APP_DB_VERSION, dbVersion);
+    } finally {
+      sqLiteHelper.removeDbFile(sessionFactory, DB_FILENAME);
+    }
+  }
+
+  @Test
+  public void createDb_ShouldSetAppIdValueToAppId() {
+    try {
+      @NotNull DbController dbController =
+          new SQLiteTestDbController(hibernateAdapter, APP_ID, APP_DB_VERSION);
+      dbController.createDb();
+      boolean result = dbController.isDbSuitable();
+      Assert.assertTrue("createDb() should set appId value to appId",
+          result);
+    } finally {
+      sqLiteHelper.removeDbFile(sessionFactory, DB_FILENAME);
+    }
+  }
+
+  private void prepareDb() {
+    try {
+      sqLiteHelper.connect(DB_FILENAME);
+      sqLiteHelper.execute("create table object (name text);");
+    } finally {
+      sqLiteHelper.disconnect();
+    }
+  }
+
+  private void prepareDbWithServiceInfo(int appId, int dbVersion) {
+    try {
+      sqLiteHelper.connect(DB_FILENAME);
+      sqLiteHelper.execute("pragma application_id=" + appId + ';');
+      sqLiteHelper.execute("pragma user_version=" + dbVersion + ';');
+    } finally {
+      sqLiteHelper.disconnect();
+    }
+  }
+
+  private void prepareDbWithTestObject(long id) {
+    prepareDb();
+    @NotNull TestObject testObject = new TestObject(id, "testObject");
+    putTestObject(testObject);
+  }
+
+  private void prepareDbWithTestObjectList(List<TestObject> list) {
+    prepareDb();
+    list.forEach(this::putTestObject);
+  }
+
+  @Nullable
+  private String getTestObjectName(long id) {
+    @Nullable String result = null;
+    try {
+      sqLiteHelper.connect(DB_FILENAME);
+      @Nullable ResultSet resultSet =
+          sqLiteHelper.executeQuery("select name from object where rowid = " + id + ";");
+      if (resultSet != null && resultSet.next()) {
+        result = resultSet.getString(1);
+      }
+    } catch (SQLException e) {
+      throw new RuntimeException("Could not get database entry");
+    } finally {
+      sqLiteHelper.disconnect();
+    }
+    return result;
+  }
+
+  private void putTestObject(@NotNull TestObject testObject) {
+    try {
+      sqLiteHelper.connect(DB_FILENAME);
+      long id = testObject.getId();
+      @NotNull String name = testObject.getName();
+      sqLiteHelper.execute("insert into object (rowid, name) values (" + id + ", '" +
+          name + "');");
+    } finally {
+      sqLiteHelper.disconnect();
+    }
+  }
+
+  @NotNull
+  private List<TestObject> prepareList() {
+    @NotNull TestObject testObject = new TestObject(1L, "first");
+    @NotNull TestObject testObject2 = new TestObject(2L, "second");
+    @NotNull TestObject testObject3 = new TestObject(3L, "third");
+    @NotNull List<TestObject> result = new ArrayList<>();
+    result.add(testObject);
+    result.add(testObject2);
+    result.add(testObject3);
+    return result;
+  }
+}
