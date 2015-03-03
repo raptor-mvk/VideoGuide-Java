@@ -87,6 +87,7 @@ abstract class MaskedTextField extends BasicSizedTextField {
   }
 
   private void setListeners() {
+    setMouseListener();
     setSelectionListener();
     setKeyPressedListener();
     setKeyTypedListener();
@@ -101,9 +102,15 @@ abstract class MaskedTextField extends BasicSizedTextField {
     selectionProperty().addListener((observableValue, oldPropertyValue,
                                      newPropertyValue) -> {
       if (newPropertyValue.getLength() > 1) {
-        int selectionStart = newPropertyValue.getStart();
-        selectRange(selectionStart, selectionStart + 1);
+        selectRange(0, 1);
       }
+    });
+  }
+
+  private void setMouseListener() {
+    setOnMouseClicked((event) -> {
+      int startPosition = getCaretPosition();
+      selectNearestPosition(startPosition);
     });
   }
 
@@ -239,6 +246,22 @@ abstract class MaskedTextField extends BasicSizedTextField {
     int caretPosition = getCaretPosition();
     setText(text);
     positionCaret(caretPosition);
+  }
+
+  private void selectNearestPosition(int startPosition) {
+    int digitPositionsCount = digitPositions.size();
+    if (startPosition < digitPositions.get(0)) {
+      position = 0;
+    } else if (startPosition > digitPositions.get(digitPositionsCount - 1)) {
+      position = digitPositionsCount - 1;
+    } else {
+      position = 0;
+      while (startPosition > digitPositions.get(position)) {
+        position++;
+      }
+    }
+    int caretPosition = digitPositions.get(position);
+    selectRange(caretPosition, caretPosition + 1);
   }
 
   @NotNull

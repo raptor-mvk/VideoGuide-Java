@@ -46,10 +46,75 @@ public class DurationFieldUITests extends UITests<DurationField> {
   }
 
   @Test
+  public void focus_AfterCaretMove_ShouldPositionToFirstDigit() {
+    @NotNull TextField field = safeFindById(ID);
+    runAndWait(() -> {
+      field.positionCaret(3);
+      field.requestFocus();
+    });
+    int selectionStart = field.getSelection().getStart();
+    Assert.assertEquals("focus should select first digit", 0, selectionStart);
+  }
+
+  @Test
+  public void mouseClick_ShouldSelectSingleDigit() {
+    @NotNull TextField field = safeFindById(ID);
+    safeClickById(ID);
+    int selectionLength = field.getSelection().getLength();
+    Assert.assertEquals("mouseClick should select single digit", 1, selectionLength);
+  }
+
+  @Test
+  public void mouseClickOnDigitPosition_ShouldSelectCorrespondingDigit() {
+    @NotNull TextField field = safeFindById(ID);
+    // caret position is empirically determined
+    int expectedCaretPosition = 4;
+    safeClickById(ID);
+    int selectionStart = field.getSelection().getStart();
+    Assert.assertEquals("mouse click on digit position should select corresponding digit",
+        expectedCaretPosition, selectionStart);
+  }
+
+  @Test
+  public void mouseClickOnNonDigitPosition_ShouldSelectDigitToTheRight() {
+    @NotNull TextField field = safeFindById(ID);
+    // coordinates and caret position are empirically determined
+    int expectedCaretPosition = 6;
+    move('#' + ID).moveBy(2.5, 0.0).click();
+    int selectionStart = field.getSelection().getStart();
+    Assert.assertEquals("mouse click on digit position should select corresponding digit",
+        expectedCaretPosition, selectionStart);
+  }
+
+  @Test
+  public void mouseClickRighterThanLastDigit_ShouldSelectLastDigit() {
+    @NotNull TextField field = safeFindById(ID);
+    int expectedCaretPosition = 7;
+    // coordinates are empirically determined
+    move('#' + ID).moveBy(23.0, 0.0).click();
+    int selectionStart = field.getSelection().getStart();
+    Assert.assertEquals("mouse click righter than last digit should select last digit",
+        expectedCaretPosition, selectionStart);
+  }
+
+  @Test
+  public void mouseClickLefterThanFirstDigit_ShouldSelectTheRightestDigit() {
+    @NotNull TextField field = safeFindById(ID);
+    int expectedCaretPosition = 0;
+    // coordinates are empirically determined
+    move('#' + ID).moveBy(-32.0, 0.0).click();
+    int selectionStart = field.getSelection().getStart();
+    Assert.assertEquals("mouse click righter than last digit should select first digit",
+        expectedCaretPosition, selectionStart);
+  }
+
+  @Test
   public void input_ShouldSetValue() {
     @NotNull String inputText = "281709";
     @NotNull Integer expectedValue = restoreValue(inputText);
-    safeClickById(ID).type(inputText);
+    @NotNull MaskedTextField field = safeFindById(ID);
+    runAndWait(field::requestFocus);
+    type(inputText);
     @Nullable Integer fieldValue = fieldValueTester.getValue();
     Assert.assertEquals("input natural number should set correct value", expectedValue,
         fieldValue);
@@ -88,7 +153,7 @@ public class DurationFieldUITests extends UITests<DurationField> {
     @NotNull String fieldFilteredText = StringUtils.remove(fieldText, ':');
     @NotNull Integer value = restoreValue(fieldFilteredText);
     Assert.assertEquals("setFieldValue should set correct value, when seconds count is " +
-            "one-digit", expectedValue, value);
+        "one-digit", expectedValue, value);
   }
 
   @Test
@@ -120,8 +185,9 @@ public class DurationFieldUITests extends UITests<DurationField> {
     @NotNull String inputText = "368";
     @NotNull String expectedInput = inputText.substring(0, 2);
     @NotNull String expectedValue = getExpectedText(expectedInput);
-    safeClickById(ID).type(inputText);
     @NotNull MaskedTextField field = safeFindById(ID);
+    runAndWait(field::requestFocus);
+    type(inputText);
     @NotNull String fieldValue = field.getValue();
     Assert.assertEquals("field should not accept incorrect first 'minutes' digit",
         expectedValue, fieldValue);
@@ -132,8 +198,9 @@ public class DurationFieldUITests extends UITests<DurationField> {
     @NotNull String inputText = "10309";
     @NotNull String expectedInput = inputText.substring(0, 4);
     @NotNull String expectedValue = getExpectedText(expectedInput);
-    safeClickById(ID).type(inputText);
     @NotNull MaskedTextField field = safeFindById(ID);
+    runAndWait(field::requestFocus);
+    type(inputText);
     @NotNull String fieldValue = field.getValue();
     Assert.assertEquals("field should not accept incorrect first 'seconds' digit",
         expectedValue, fieldValue);
@@ -143,10 +210,11 @@ public class DurationFieldUITests extends UITests<DurationField> {
   public void leftArrowKey_ShouldMoveCaretLeft() {
     @NotNull String inputText = "8916";
     @NotNull String inputDigit = "3";
-    safeClickById(ID).type(inputText).type(KeyCode.LEFT).type(inputDigit);
+    @NotNull MaskedTextField field = safeFindById(ID);
+    runAndWait(field::requestFocus);
+    type(inputText).type(KeyCode.LEFT).type(inputDigit);
     @NotNull String expectedInput = inputText.substring(0, 3) + inputDigit;
     @NotNull String expectedValue = getExpectedText(expectedInput);
-    @NotNull MaskedTextField field = safeFindById(ID);
     @NotNull String fieldValue = field.getValue();
     Assert.assertEquals("right arrow key should move caret to left", expectedValue,
         fieldValue);
@@ -156,10 +224,11 @@ public class DurationFieldUITests extends UITests<DurationField> {
   public void rightArrowKey_ShouldMoveCaretToRight() {
     @NotNull String inputText = "3819";
     @NotNull String inputDigit = "5";
-    safeClickById(ID).type(inputText).type(KeyCode.RIGHT).type(inputDigit);
+    @NotNull MaskedTextField field = safeFindById(ID);
+    runAndWait(field::requestFocus);
+    type(inputText).type(KeyCode.RIGHT).type(inputDigit);
     @NotNull String expectedInput = inputText + "0" + inputDigit;
     @NotNull String expectedValue = getExpectedText(expectedInput);
-    @NotNull MaskedTextField field = safeFindById(ID);
     @NotNull String fieldValue = field.getValue();
     Assert.assertEquals("left arrow key should move caret to right", expectedValue,
         fieldValue);
@@ -169,10 +238,11 @@ public class DurationFieldUITests extends UITests<DurationField> {
   public void backSpaceKey_ShouldMoveCaretToLeft() {
     @NotNull String inputText = "8713";
     @NotNull String inputDigit = "5";
-    safeClickById(ID).type(inputText).type(KeyCode.BACK_SPACE).type(inputDigit);
+    @NotNull MaskedTextField field = safeFindById(ID);
+    runAndWait(field::requestFocus);
+    type(inputText).type(KeyCode.BACK_SPACE).type(inputDigit);
     @NotNull String expectedInput = inputText.substring(0, 3) + inputDigit;
     @NotNull String expectedValue = getExpectedText(expectedInput);
-    @NotNull MaskedTextField field = safeFindById(ID);
     @NotNull String fieldValue = field.getValue();
     Assert.assertEquals("backSpace key should move caret to left", expectedValue,
         fieldValue);
@@ -181,10 +251,11 @@ public class DurationFieldUITests extends UITests<DurationField> {
   @Test
   public void backSpaceKey_ShouldReplacePreviousDigitWithZero() {
     @NotNull String inputText = "8713";
-    safeClickById(ID).type(inputText).type(KeyCode.BACK_SPACE);
+    @NotNull MaskedTextField field = safeFindById(ID);
+    runAndWait(field::requestFocus);
+    type(inputText).type(KeyCode.BACK_SPACE);
     @NotNull String expectedInput = inputText.substring(0, 3);
     @NotNull String expectedValue = getExpectedText(expectedInput);
-    @NotNull MaskedTextField field = safeFindById(ID);
     @NotNull String fieldValue = field.getValue();
     Assert.assertEquals("backSpace key should replace previous digit with zero",
         expectedValue, fieldValue);
@@ -193,9 +264,10 @@ public class DurationFieldUITests extends UITests<DurationField> {
   @Test
   public void deleteKey_ShouldSetTextToZero() {
     @NotNull String inputText = "2333";
-    safeClickById(ID).type(inputText).type(KeyCode.DELETE);
-    @NotNull String expectedValue = MASK.replace('#', '0');
     @NotNull MaskedTextField field = safeFindById(ID);
+    runAndWait(field::requestFocus);
+    type(inputText).type(KeyCode.DELETE);
+    @NotNull String expectedValue = MASK.replace('#', '0');
     @NotNull String fieldValue = field.getValue();
     Assert.assertEquals("delete should set text to zeroed mask", expectedValue,
         fieldValue);
@@ -204,10 +276,11 @@ public class DurationFieldUITests extends UITests<DurationField> {
   @Test
   public void emptyField_ShouldSetTextToZero() {
     @NotNull String inputText = "2333";
-    safeClickById(ID).type(inputText);
+    @NotNull MaskedTextField field = safeFindById(ID);
+    runAndWait(field::requestFocus);
+    type(inputText);
     emptyField(ID);
     @NotNull String expectedValue = MASK.replace('#', '0');
-    @NotNull MaskedTextField field = safeFindById(ID);
     @NotNull String fieldValue = field.getValue();
     Assert.assertEquals("empty field should set text to zeroed mask", expectedValue,
         fieldValue);
@@ -217,10 +290,11 @@ public class DurationFieldUITests extends UITests<DurationField> {
   public void deleteKey_ShouldMoveCaretToLeftmostPosition() {
     @NotNull String inputText = "8713";
     @NotNull String inputDigit = "5";
-    safeClickById(ID).type(inputText).type(KeyCode.DELETE).type(inputDigit);
+    @NotNull MaskedTextField field = safeFindById(ID);
+    runAndWait(field::requestFocus);
+    type(inputText).type(KeyCode.DELETE).type(inputDigit);
     @NotNull String expectedInput = inputDigit;
     @NotNull String expectedValue = getExpectedText(expectedInput);
-    @NotNull MaskedTextField field = safeFindById(ID);
     @NotNull String fieldValue = field.getValue();
     Assert.assertEquals("delete key should move caret to the leftmost position",
         expectedValue, fieldValue);
@@ -230,10 +304,11 @@ public class DurationFieldUITests extends UITests<DurationField> {
   public void homeKey_ShouldMoveCaretToLeftmostPosition() {
     @NotNull String inputText = "8713";
     @NotNull String inputDigit = "5";
-    safeClickById(ID).type(inputText).type(KeyCode.HOME).type(inputDigit);
+    @NotNull MaskedTextField field = safeFindById(ID);
+    runAndWait(field::requestFocus);
+    type(inputText).type(KeyCode.HOME).type(inputDigit);
     @NotNull String expectedInput = inputDigit + inputText.substring(1);
     @NotNull String expectedValue = getExpectedText(expectedInput);
-    @NotNull MaskedTextField field = safeFindById(ID);
     @NotNull String fieldValue = field.getValue();
     Assert.assertEquals("home key should move caret to the leftmost position",
         expectedValue, fieldValue);
@@ -243,10 +318,11 @@ public class DurationFieldUITests extends UITests<DurationField> {
   public void endKey_ShouldMoveCaretToRightmostPosition() {
     @NotNull String inputText = "8713";
     @NotNull String inputDigit = "5";
-    safeClickById(ID).type(inputText).type(KeyCode.END).type(inputDigit);
+    @NotNull MaskedTextField field = safeFindById(ID);
+    runAndWait(field::requestFocus);
+    type(inputText).type(KeyCode.END).type(inputDigit);
     @NotNull String expectedInput = inputText + "0" + inputDigit;
     @NotNull String expectedValue = getExpectedText(expectedInput);
-    @NotNull MaskedTextField field = safeFindById(ID);
     @NotNull String fieldValue = field.getValue();
     Assert.assertEquals("end key should move caret to the rightmost position",
         expectedValue, fieldValue);
@@ -256,8 +332,9 @@ public class DurationFieldUITests extends UITests<DurationField> {
   public void shortDigitalInput_FieldShouldContainWholeText() {
     @NotNull String inputText = "012345";
     @NotNull String expectedValue = getExpectedText(inputText);
-    safeClickById(ID).type(inputText);
     @NotNull MaskedTextField field = safeFindById(ID);
+    runAndWait(field::requestFocus);
+    type(inputText);
     @NotNull String fieldValue = field.getValue();
     Assert.assertEquals("field should contain whole text, when input is short and " +
         "contains only digits", expectedValue, fieldValue);
@@ -267,8 +344,9 @@ public class DurationFieldUITests extends UITests<DurationField> {
   public void longDigitalInput_FieldShouldContainTruncatedText() {
     @NotNull String inputText = "3523521435";
     @NotNull String expectedValue = getExpectedText(inputText);
-    safeClickById(ID).type(inputText);
     @NotNull MaskedTextField field = safeFindById(ID);
+    runAndWait(field::requestFocus);
+    type(inputText);
     @NotNull String fieldValue = field.getValue();
     Assert.assertEquals("field should contain truncated text, when input is long and " +
         "contains only digits", expectedValue, fieldValue);
@@ -279,8 +357,9 @@ public class DurationFieldUITests extends UITests<DurationField> {
     @NotNull String inputText = "34glamour12trip11mask";
     @NotNull String filteredInputText = filterNatural(inputText);
     @NotNull String expectedValue = getExpectedText(filteredInputText);
-    safeClickById(ID).type(inputText);
     @NotNull MaskedTextField field = safeFindById(ID);
+    runAndWait(field::requestFocus);
+    type(inputText);
     @NotNull String fieldValue = field.getValue();
     Assert.assertEquals("field should contain all digits, when input is short and mixed",
         expectedValue, fieldValue);
@@ -291,8 +370,9 @@ public class DurationFieldUITests extends UITests<DurationField> {
     @NotNull String inputText = "341people9zap3tone78meta";
     @NotNull String filteredInputText = filterNatural(inputText);
     @NotNull String expectedValue = getExpectedText(filteredInputText);
-    safeClickById(ID).type(inputText);
     @NotNull MaskedTextField field = safeFindById(ID);
+    runAndWait(field::requestFocus);
+    type(inputText);
     @NotNull String fieldValue = field.getValue();
     Assert.assertEquals("field should contain digits truncated to maxLength, when " +
         "input is long and mixed", expectedValue, fieldValue);
