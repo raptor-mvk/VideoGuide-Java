@@ -2,4 +2,4 @@ Manifest-Version: 1.0
 Main-Class: ru.mvk.videoGuide.core.VideoGuide
 Sealed: true
 Implementation-Title: VideoGuide
-Implementation-Version: 1.0.2.11
+Implementation-Version: 1.0.2.12

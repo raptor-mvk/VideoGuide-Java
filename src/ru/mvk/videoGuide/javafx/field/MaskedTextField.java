@@ -101,6 +101,7 @@ abstract class MaskedTextField extends BasicSizedTextField {
     selectionProperty().addListener((observableValue, oldPropertyValue,
                                      newPropertyValue) -> {
       if (newPropertyValue.getLength() > 1) {
+        position = 0;
         selectRange(0, 1);
       }
     });

@@ -4,9 +4,11 @@
 
 package ru.mvk.videoGuide.javafx.field;
 
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
+import javafx.scene.layout.GridPane;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -47,13 +49,23 @@ public class DurationFieldUITests extends UITests<DurationField> {
 
   @Test
   public void focus_AfterCaretMove_ShouldPositionToFirstDigit() {
-    @NotNull TextField field = safeFindById(ID);
+    @NotNull MaskedTextField field = safeFindById(ID);
+    @NotNull String inputText = "28";
+    @NotNull String expectedValue = getExpectedText(inputText);
+    runAndWait(field::requestFocus);
+    type(KeyCode.END);
     runAndWait(() -> {
-      field.positionCaret(3);
+      @Nullable Node parent = field.getParent();
+      if (parent == null) {
+        throw new RuntimeException("Parent is null");
+      }
+      parent.requestFocus();
       field.requestFocus();
     });
-    int selectionStart = field.getSelection().getStart();
-    Assert.assertEquals("focus should select first digit", 0, selectionStart);
+    type(inputText);
+    @NotNull String fieldValue = field.getValue();
+    Assert.assertEquals("focus after caret move should move caret to first digit",
+        expectedValue, fieldValue);
   }
 
   @Test
@@ -391,11 +403,13 @@ public class DurationFieldUITests extends UITests<DurationField> {
   @NotNull
   @Override
   protected Parent getRootNode() {
+    @NotNull GridPane root = new GridPane();
     @NotNull DurationFieldInfo fieldInfo = new DurationFieldInfo("duration", MAX_LENGTH);
     @NotNull DurationField field = new DurationField(fieldInfo);
     field.setFieldUpdater(fieldValueTester::setValue);
     field.setId(ID);
-    return field;
+    root.add(field, 0, 0);
+    return root;
   }
 
   @NotNull
