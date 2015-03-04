@@ -11,11 +11,11 @@ import org.junit.Assert;
 import org.junit.Test;
 import ru.mvk.videoGuide.dao.Dao;
 import ru.mvk.videoGuide.dao.DaoImpl;
-import ru.mvk.videoGuide.dao.TestObject;
 import ru.mvk.videoGuide.module.db.DbController;
 import ru.mvk.videoGuide.module.db.HibernateAdapter;
+import ru.mvk.videoGuide.test.SQLiteTestDbController;
+import ru.mvk.videoGuide.test.TestObject;
 import ru.mvk.videoGuide.utils.SQLiteHelper;
-import ru.mvk.videoGuide.utils.SQLiteTestDbController;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -35,7 +35,7 @@ public class DbIntegrationTests {
   private HibernateAdapter hibernateAdapter = new HibernateAdapter(sessionFactory);
 
   @Test
-  public void simpleDaoCreate_ShouldCreateDatabaseEntry() {
+  public void daoImplCreate_ShouldCreateDatabaseEntry() {
     try {
       @NotNull Dao<TestObject, Long> dao =
           new DaoImpl<>(TestObject.class, Long.class, hibernateAdapter);
@@ -52,7 +52,7 @@ public class DbIntegrationTests {
   }
 
   @Test
-  public void simpleDaoRead_ShouldReturnDatabaseEntry() {
+  public void daoImplRead_ShouldReturnDatabaseEntry() {
     try {
       @NotNull Dao<TestObject, Long> dao =
           new DaoImpl<>(TestObject.class, Long.class, hibernateAdapter);
@@ -70,7 +70,7 @@ public class DbIntegrationTests {
   }
 
   @Test
-  public void simpleDaoRead_WrongId_ShouldReturnNull() {
+  public void daoImplRead_WrongId_ShouldReturnNull() {
     try {
       @NotNull Dao<TestObject, Long> dao =
           new DaoImpl<>(TestObject.class, Long.class, hibernateAdapter);
@@ -83,7 +83,7 @@ public class DbIntegrationTests {
   }
 
   @Test
-  public void simpleDaoUpdate_ShouldUpdateDatabaseEntry() {
+  public void daoImplUpdate_ShouldUpdateDatabaseEntry() {
     try {
       @NotNull Dao<TestObject, Long> dao =
           new DaoImpl<>(TestObject.class, Long.class, hibernateAdapter);
@@ -100,7 +100,7 @@ public class DbIntegrationTests {
   }
 
   @Test
-  public void simpleDaoUpdate_NoEntry_ShouldNotCreateDatabaseEntry() {
+  public void daoImplUpdate_NoEntry_ShouldNotCreateDatabaseEntry() {
     try {
       @NotNull Dao<TestObject, Long> dao =
           new DaoImpl<>(TestObject.class, Long.class, hibernateAdapter);
@@ -117,7 +117,7 @@ public class DbIntegrationTests {
   }
 
   @Test
-  public void simpleDaoDelete_ShouldDeleteDatabaseEntry() {
+  public void daoImplDelete_ShouldDeleteDatabaseEntry() {
     try {
       @NotNull Dao<TestObject, Long> dao =
           new DaoImpl<>(TestObject.class, Long.class, hibernateAdapter);
@@ -133,7 +133,7 @@ public class DbIntegrationTests {
   }
 
   @Test
-  public void simpleDaoDelete_WrongEntity_ShouldNotThrowException() {
+  public void daoImplDelete_WrongEntity_ShouldNotThrowException() {
     boolean exceptionCaught = false;
     try {
       @NotNull Dao<TestObject, Long> dao =
@@ -152,7 +152,7 @@ public class DbIntegrationTests {
   }
 
   @Test
-  public void simpleDaoList_ShouldReturnAllEntries() {
+  public void daoImplList_ShouldReturnAllEntries() {
     try {
       @NotNull Dao<TestObject, Long> dao =
           new DaoImpl<>(TestObject.class, Long.class, hibernateAdapter);
@@ -162,6 +162,52 @@ public class DbIntegrationTests {
       boolean listsAreEqual = expectedList.size() == list.size() &&
           expectedList.containsAll(list) && list.containsAll(expectedList);
       Assert.assertTrue("list() should return all database entries", listsAreEqual);
+    } finally {
+      sqLiteHelper.removeDbFile(sessionFactory, DB_FILENAME);
+    }
+  }
+
+  @Test
+  public void daoImplList_NameFalse_ShouldReturnAllEntriesSortedInDescendingOrderById() {
+    try {
+      @NotNull Dao<TestObject, Long> dao =
+          new DaoImpl<>(TestObject.class, Long.class, hibernateAdapter);
+      @NotNull List<TestObject> expectedList = prepareList();
+      prepareDbWithTestObjectList(expectedList);
+      @NotNull List<TestObject> list = dao.orderedList("name", false);
+      boolean listsAreEqual = expectedList.size() == list.size() &&
+          expectedList.containsAll(list) && list.containsAll(expectedList);
+      for (int i = 1, count = list.size(); i < count; i++) {
+        @NotNull String previousTestObjectName = list.get(i - 1).getName();
+        @NotNull String currentTestObjectName = list.get(i).getName();
+        listsAreEqual = listsAreEqual &&
+            previousTestObjectName.compareTo(currentTestObjectName) <= 0;
+      }
+      Assert.assertTrue("list() should return all database entries sorted in " +
+          "ascending order by id", listsAreEqual);
+    } finally {
+      sqLiteHelper.removeDbFile(sessionFactory, DB_FILENAME);
+    }
+  }
+
+  @Test
+  public void daoImplList_IdTrue_ShouldReturnAllEntriesSortedInAscendingOrderById() {
+    try {
+      @NotNull Dao<TestObject, Long> dao =
+          new DaoImpl<>(TestObject.class, Long.class, hibernateAdapter);
+      @NotNull List<TestObject> expectedList = prepareList();
+      prepareDbWithTestObjectList(expectedList);
+      @NotNull List<TestObject> list = dao.orderedList("id", true);
+      boolean listsAreEqual = expectedList.size() == list.size() &&
+          expectedList.containsAll(list) && list.containsAll(expectedList);
+      for (int i = 1, count = list.size(); i < count; i++) {
+        @NotNull TestObject previousTestObject = list.get(i - 1);
+        @NotNull TestObject currentObject = list.get(i);
+        listsAreEqual = listsAreEqual &&
+            previousTestObject.getId() <= currentObject.getId();
+      }
+      Assert.assertTrue("list() should return all database entries sorted in " +
+          "ascending order by id", listsAreEqual);
     } finally {
       sqLiteHelper.removeDbFile(sessionFactory, DB_FILENAME);
     }
@@ -329,9 +375,9 @@ public class DbIntegrationTests {
     @NotNull TestObject testObject2 = new TestObject(2L, "second");
     @NotNull TestObject testObject3 = new TestObject(3L, "third");
     @NotNull List<TestObject> result = new ArrayList<>();
+    result.add(testObject3);
     result.add(testObject);
     result.add(testObject2);
-    result.add(testObject3);
     return result;
   }
 }

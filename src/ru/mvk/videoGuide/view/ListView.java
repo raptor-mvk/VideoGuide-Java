@@ -28,15 +28,15 @@ public interface ListView<EntityType> {
 
   void refreshTable(int selectedIndex);
 
-  void setAddButtonHandler(Runnable handler);
+  void setAddButtonHandler(@NotNull Runnable handler);
 
-  void setEditButtonHandler(Runnable handler);
+  void setEditButtonHandler(@NotNull Runnable handler);
 
-  void setRemoveButtonHandler(Runnable handler);
+  void setRemoveButtonHandler(@NotNull Runnable handler);
 
-  void setSelectedEntitySetter(Consumer<EntityType> setter);
+  void setSelectedEntitySetter(@NotNull Consumer<EntityType> setter);
 
-  void setSelectedIndexSetter(Consumer<Integer> setter);
+  void setSelectedIndexSetter(@NotNull Consumer<Integer> setter);
 
   void selectRow(int index);
 

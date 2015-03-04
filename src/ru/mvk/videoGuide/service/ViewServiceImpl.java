@@ -76,8 +76,8 @@ public class ViewServiceImpl<EntityType> implements ViewService<EntityType> {
   @Override
   public void showListView() {
     int lastSelectedIndex = selectedIndex;
-    @NotNull List<EntityType> entityList = dao.list();
-    @Nullable Object content = listView.getListView(entityList);
+    @NotNull List<EntityType> objectList = dao.list();
+    @Nullable Object content = listView.getListView(objectList);
     contentSetter.accept(content);
     listView.refreshTable(lastSelectedIndex);
   }

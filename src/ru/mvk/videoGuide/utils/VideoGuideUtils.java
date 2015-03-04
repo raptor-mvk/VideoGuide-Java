@@ -9,8 +9,6 @@ import org.jetbrains.annotations.Nullable;
 import ru.mvk.videoGuide.exception.VideoGuideRuntimeException;
 
 import java.util.Collection;
-import java.util.function.Consumer;
-import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 public class VideoGuideUtils {

@@ -479,21 +479,20 @@ public class JFXListViewUITests extends UITests<ListView<Student>> {
   }
 
   @Test
-  public void doubleClick_ShouldCallEditButtonHandler() {
+  public void doubleClick_NotEmptyRow_ShouldCallEditButtonHandler() {
     @NotNull ListView<Student> listView = getObjectUnderTest();
     editButtonState.setValue(false);
-    runAndWait(() -> listView.selectRow(1));
     @NotNull String tableId = listView.getTableId();
-    safeMoveById(tableId).doubleClick();
+    // coordinates are determined empirically
+    safeMoveById(tableId).moveBy(0.0, -145.0).doubleClick();
     @Nullable Boolean editButtonWasClicked = editButtonState.getValue();
     Assert.assertEquals("enter key button should execute editButtonHandler", true,
         editButtonWasClicked);
   }
 
   @Test
-  public void doubleClick_noSelection_ShouldDoNothing() {
+  public void doubleClick_EmptyRow_ShouldDoNothing() {
     @NotNull ListView<Student> listView = getObjectUnderTest();
-    runAndWait(listView::clearSelection);
     editButtonState.setValue(false);
     @NotNull String tableId = listView.getTableId();
     safeMoveById(tableId).doubleClick();

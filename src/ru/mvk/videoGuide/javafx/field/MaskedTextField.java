@@ -4,7 +4,6 @@
 
 package ru.mvk.videoGuide.javafx.field;
 
-import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;

@@ -5,6 +5,7 @@ package ru.mvk.videoGuide.dao;
 
 import org.hibernate.Criteria;
 import org.hibernate.Session;
+import org.hibernate.criterion.Order;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ru.mvk.videoGuide.exception.VideoGuideRuntimeException;
@@ -77,8 +78,33 @@ public class DaoImpl<EntityType, PrimaryKeyType extends Serializable>
   @Override
   public List<EntityType> list() {
     @NotNull Class<EntityType> entityType = getEntityType();
-    @Nullable List<?> entityList =
-        executeInTransaction((session) -> getList(session, entityType));
+    @Nullable List<?> entityList = executeInTransaction((session) -> {
+      @NotNull Criteria criteria = getCriteria(session, entityType);
+      return criteria.list();
+    });
+    if (entityList == null) {
+      throw new VideoGuideRuntimeException("SimpleDao: list() returned null");
+    }
+    @NotNull Stream<EntityType> entityStream =
+        VideoGuideUtils.mapToTypedStream(entityList, entityType);
+    return entityStream.collect(Collectors.toList());
+  }
+
+  @NotNull
+  @Override
+  public List<EntityType> orderedList(@NotNull String field, boolean isAscending) {
+    @NotNull Class<EntityType> entityType = getEntityType();
+    @Nullable List<?> entityList = executeInTransaction((session) -> {
+      @NotNull Criteria criteria = getCriteria(session, entityType);
+      @NotNull Order order;
+      if (isAscending) {
+        order = Order.asc(field);
+      } else {
+        order = Order.desc(field);
+      }
+      criteria.addOrder(order);
+      return criteria.list();
+    });
     if (entityList == null) {
       throw new VideoGuideRuntimeException("SimpleDao: list() returned null");
     }
@@ -98,14 +124,13 @@ public class DaoImpl<EntityType, PrimaryKeyType extends Serializable>
   }
 
   @NotNull
-  private List<?> getList(@NotNull Session session,
-                          @NotNull Class<EntityType> entityType) {
+  private Criteria getCriteria(@NotNull Session session,
+                               @NotNull Class<EntityType> entityType) {
     @Nullable Criteria criteria = session.createCriteria(entityType);
     if (criteria == null) {
       throw new VideoGuideRuntimeException("SimpleDao: criteria is null");
     }
-    @Nullable List<?> result = criteria.list();
-    return result;
+    return criteria;
   }
 
   @NotNull

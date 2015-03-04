@@ -2,7 +2,7 @@
  * (c) raptor_MVK, 2015. All rights reserved.
  */
 
-package ru.mvk.videoGuide.utils;
+package ru.mvk.videoGuide.test;
 
 import org.jetbrains.annotations.NotNull;
 import ru.mvk.videoGuide.module.db.HibernateAdapter;

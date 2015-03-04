@@ -10,7 +10,7 @@ import org.hibernate.cfg.Configuration;
 import org.hibernate.service.ServiceRegistry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import ru.mvk.videoGuide.dao.TestObject;
+import ru.mvk.videoGuide.test.TestObject;
 
 import java.io.File;
 import java.sql.*;

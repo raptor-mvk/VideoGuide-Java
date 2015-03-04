@@ -11,19 +11,16 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
-import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TableView.TableViewSelectionModel;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.GridPane;
-import javafx.scene.text.Font;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ru.mvk.videoGuide.descriptor.ListViewInfo;
 import ru.mvk.videoGuide.descriptor.column.ColumnInfo;
-import ru.mvk.videoGuide.descriptor.column.ViewFormatter;
 import ru.mvk.videoGuide.exception.VideoGuideRuntimeException;
 import ru.mvk.videoGuide.view.ListView;
 
@@ -73,7 +70,6 @@ public class JFXListView<EntityType> implements ListView<EntityType> {
     tableView = new TableView<>();
     gridPane = prepareGridPane();
     prepareTableView();
-    setMouseListener();
     setKeyPressedListener();
     setKeyReleasedListener();
   }
@@ -175,14 +171,6 @@ public class JFXListView<EntityType> implements ListView<EntityType> {
     selectRow(-1);
   }
 
-  private void setMouseListener() {
-    tableView.setOnMouseClicked((event) -> {
-      if(event.getClickCount() == 2) {
-        runEditButtonHandler();
-      }
-    });
-  }
-
   private void setKeyPressedListener() {
     gridPane.setOnKeyPressed((event) -> {
       @NotNull KeyCode keyCode = event.getCode();
@@ -199,7 +187,7 @@ public class JFXListView<EntityType> implements ListView<EntityType> {
       if (keyCode == KeyCode.ENTER || keyCode == KeyCode.DELETE ||
           keyCode == KeyCode.INSERT) {
         event.consume();
-        if(keyCode == KeyCode.ENTER) {
+        if (keyCode == KeyCode.ENTER) {
           runEditButtonHandler();
         } else if (keyCode == KeyCode.DELETE) {
           runRemoveButtonHandler();
@@ -262,12 +250,51 @@ public class JFXListView<EntityType> implements ListView<EntityType> {
 
   private void prepareTableView() {
     @NotNull String tableId = getTableId();
+    setRowFactory();
     tableView.setId(tableId);
     prepareColumns();
     setSelectedItemListener();
     setSelectedIndexListener();
   }
 
+  private void setRowFactory() {
+    tableView.setRowFactory(tv -> {
+      TableRow<EntityType> tableRow = new TableRow<>();
+      tableRow.setOnMouseClicked(event -> {
+        if (event.getClickCount() == 2 && (!tableRow.isEmpty())) {
+          runEditButtonHandler();
+        }
+      });
+      return tableRow;
+    });
+  }
+
+  /*
+    private void setSortListener() {
+      tableView.setOnSort((event) -> {
+        event.consume();
+        @Nullable ObservableList<TableColumn<EntityType, ?>> sortOrder =
+            tableView.getSortOrder();
+        if (sortOrder == null) {
+          throw new VideoGuideRuntimeException("JFXListView: sortOrder is null");
+        }
+        @Nullable TableColumn<EntityType, ?> sortedColumn = sortOrder.get(0);
+        @NotNull List<EntityType> items;
+        if (sortedColumn != null) {
+          boolean isAscending =
+              sortedColumn.getSortType() == TableColumn.SortType.ASCENDING;
+          @NotNull String orderField = ((JFXTableColumn<?, ?>) sortedColumn).getColumnKey();
+          items = listGetter.apply(orderField, isAscending);
+          setColumnOrderText(sortedColumn, isAscending);
+        } else {
+          items = listGetter.apply(null, true);
+        }
+        @NotNull ObservableList<EntityType> itemsObservable =
+            FXCollections.observableList(items);
+        tableView.setItems(itemsObservable);
+      });
+    }
+  */
   private void setSelectedItemListener() {
     @Nullable TableViewSelectionModel<EntityType> tableViewSelectionModel =
         getTableViewSelectionModel();
@@ -335,7 +362,8 @@ public class JFXListView<EntityType> implements ListView<EntityType> {
         @Nullable ColumnInfo columnInfo = entry.getValue();
         if ((fieldName != null) && (columnInfo != null)) {
           @NotNull TableColumn<EntityType, Object> tableColumn =
-              prepareTableColumn(fieldName, columnInfo);
+              new JFXTableColumn<>(columnInfo, fieldName);
+          tableColumn.setSortable(true);
           columnList.add(tableColumn);
         }
       }
@@ -350,39 +378,5 @@ public class JFXListView<EntityType> implements ListView<EntityType> {
       throw new VideoGuideRuntimeException("JFXListView: columnList is null");
     }
     return result;
-  }
-
-  @NotNull
-  private TableColumn<EntityType, Object> prepareTableColumn(@NotNull String columnKey,
-                                                             @NotNull
-                                                             ColumnInfo columnInfo) {
-    @NotNull String columnName = columnInfo.getName();
-    @NotNull TableColumn<EntityType, Object> tableColumn = new TableColumn<>(columnName);
-    tableColumn.setCellValueFactory(new PropertyValueFactory<>(columnKey));
-    setTableColumnParams(tableColumn, columnInfo);
-    return tableColumn;
-  }
-
-  private void setTableColumnParams(@NotNull TableColumn<EntityType, Object> tableColumn,
-                                    @NotNull ColumnInfo columnInfo) {
-    // 0.7 is a ratio of conversion from font size to average letter width
-    @NotNull Font defaultFont = Font.getDefault();
-    double width = columnInfo.getWidth() * defaultFont.getSize() * 0.7;
-    tableColumn.setMinWidth(width);
-    tableColumn.setPrefWidth(width);
-    tableColumn.setMaxWidth(width);
-    setCellFactory(tableColumn, columnInfo);
-  }
-
-  private void setCellFactory(@NotNull TableColumn<EntityType, Object> tableColumn,
-                              @NotNull ColumnInfo columnInfo) {
-    tableColumn.setCellFactory(param -> new TableCell<EntityType, Object>() {
-      @Override
-      public void updateItem(@Nullable Object item, boolean empty) {
-        @NotNull ViewFormatter viewFormatter = columnInfo.getViewFormatter();
-        @NotNull String value = viewFormatter.apply(item);
-        setText(value);
-      }
-    });
   }
 }

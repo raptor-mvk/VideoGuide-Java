@@ -24,5 +24,8 @@ public interface Dao<EntityType, PrimaryKeyType extends Serializable> {
   List<EntityType> list();
 
   @NotNull
+  List<EntityType> orderedList(@NotNull String field, boolean isAscending);
+
+  @NotNull
   Class<EntityType> getEntityType();
 }

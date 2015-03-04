@@ -85,7 +85,7 @@ public class VideoGuide extends Application {
   @Override
   public void start(Stage primaryStage) throws Exception {
     filmViewService.showListView();
-    primaryStage.setScene(new Scene(root, 850, 440));
+    primaryStage.setScene(new Scene(root, 1000, 440));
     primaryStage.setResizable(false);
     primaryStage.show();
   }
@@ -98,7 +98,7 @@ public class VideoGuide extends Application {
   @NotNull
   private ViewInfo<Film> prepareFilmViewInfo() {
     @NotNull ViewInfo<Film> viewInfo = new ViewInfoImpl<>(Film.class);
-    viewInfo.addFieldInfo("name", new TextFieldInfo("Название", 40));
+    viewInfo.addFieldInfo("name", new TextFieldInfo("Название", 60));
     viewInfo.addFieldInfo("length", new DurationFieldInfo("Длительность", 3));
     viewInfo.addFieldInfo("size", new NaturalFieldInfo<>(Long.class, "Размер", 12));
     viewInfo.addFieldInfo("disc", new NaturalFieldInfo<>(Byte.class, "Диск", 2));
@@ -109,13 +109,13 @@ public class VideoGuide extends Application {
   @NotNull
   private ListViewInfo<Film> prepareFilmListViewInfo() {
     @NotNull ListViewInfo<Film> listViewInfo = new ListViewInfoImpl<>(Film.class);
-    listViewInfo.addColumnInfo("name", new StringColumnInfo("Название", 50));
-    listViewInfo.addColumnInfo("length", new DurationColumnInfo("Длит.", 8));
-    listViewInfo.addColumnInfo("size", new FileSizeColumnInfo("Размер", 8));
-    listViewInfo.addColumnInfo("disc", new StringColumnInfo("Диск", 5));
-    listViewInfo.addColumnInfo("filesCount", new StringColumnInfo("Файлов", 7));
+    listViewInfo.addColumnInfo("name", new StringColumnInfo("Название", 60));
+    listViewInfo.addColumnInfo("length", new DurationColumnInfo("Длит.", 10));
+    listViewInfo.addColumnInfo("size", new FileSizeColumnInfo("Размер", 10));
+    listViewInfo.addColumnInfo("disc", new StringColumnInfo("Диск", 8));
+    listViewInfo.addColumnInfo("filesCount", new StringColumnInfo("Файлов", 8));
     listViewInfo.addColumnInfo("averageLength", new DurationColumnInfo("Ср. длит.", 10));
-    listViewInfo.addColumnInfo("averageSize", new FileSizeColumnInfo("Ср. размер", 10));
+    listViewInfo.addColumnInfo("averageSize", new FileSizeColumnInfo("Ср. размер", 12));
     return listViewInfo;
   }
 
