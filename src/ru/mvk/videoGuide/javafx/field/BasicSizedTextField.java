@@ -25,9 +25,9 @@ abstract class BasicSizedTextField extends TextField {
   }
 
   private void setAllWidths(int length) {
-    // 0.7 is a ratio of conversion from font size to average letter width
+    // 0.75 is a ratio of conversion from font size to average letter width
     Font defaultFont = Font.getDefault();
-    double width = length * defaultFont.getSize() * 0.7;
+    double width = length * defaultFont.getSize() * 0.75;
     setMinWidth(width);
     setMaxWidth(width);
     setMaxWidth(width);

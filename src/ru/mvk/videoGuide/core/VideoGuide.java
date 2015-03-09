@@ -99,7 +99,7 @@ public class VideoGuide extends Application {
 		@NotNull ViewInfo<Film> viewInfo = new ViewInfoImpl<>(Film.class);
 		viewInfo.addFieldInfo("name", new TextFieldInfo("Название", 60));
 		viewInfo.addFieldInfo("length",
-				new NaturalFieldInfo<>(Integer.class, "Длительность", 3));
+				new NaturalFieldInfo<>(Integer.class, "Длительность", 6));
 		viewInfo.addFieldInfo("size", new NaturalFieldInfo<>(Long.class, "Размер", 12));
 		viewInfo.addFieldInfo("disc", new NaturalFieldInfo<>(Byte.class, "Диск", 2));
 		viewInfo.addFieldInfo("filesCount", new NaturalFieldInfo<>(Short.class, "Файлов", 3));
