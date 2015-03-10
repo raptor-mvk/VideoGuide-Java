@@ -76,8 +76,7 @@ public class ViewServiceImpl<EntityType> implements ViewService<EntityType> {
   @Override
   public void showListView() {
     int lastSelectedIndex = selectedIndex;
-    @NotNull List<EntityType> objectList = dao.list();
-    @Nullable Object content = listView.getListView(objectList);
+    @Nullable Object content = listView.getListView();
     contentSetter.accept(content);
     listView.refreshTable(lastSelectedIndex);
   }
@@ -112,6 +111,11 @@ public class ViewServiceImpl<EntityType> implements ViewService<EntityType> {
     this.contentSetter = contentSetter;
   }
 
+  @Override
+  public void setDefaultOrder(@NotNull String fieldKey, boolean isAscending) {
+    listView.setListSupplier(() -> dao.orderedList(fieldKey, isAscending));
+  }
+
   private void setSelectedIndex(int index) {
     selectedIndex = index;
   }
@@ -131,5 +135,6 @@ public class ViewServiceImpl<EntityType> implements ViewService<EntityType> {
     listView.setRemoveButtonHandler(this::removeEntity);
     listView.setEditButtonHandler(() -> showView(false));
     listView.setAddButtonHandler(() -> showView(true));
+    listView.setListSupplier(dao::list);
   }
 }

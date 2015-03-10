@@ -23,11 +23,13 @@ import ru.mvk.videoGuide.test.Student;
 import ru.mvk.videoGuide.utils.UITests;
 import ru.mvk.videoGuide.view.ListView;
 
+import javax.persistence.Entity;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 public class JFXListViewUITests extends UITests<ListView<Student>> {
   @NotNull
@@ -54,6 +56,8 @@ public class JFXListViewUITests extends UITests<ListView<Student>> {
   private final ListViewInfo<Student> listViewInfo = prepareListViewInfo();
   @NotNull
   private final List<Student> students = prepareStudents();
+  @NotNull
+  private final Supplier<List<Student>> listSupplier = () -> students;
 
   @Test
   public void tableShouldHaveCorrectNumberOfColumns() {
@@ -506,7 +510,7 @@ public class JFXListViewUITests extends UITests<ListView<Student>> {
   protected Parent getRootNode() {
     @NotNull JFXListView<Student> listView = (JFXListView<Student>) prepareListView();
     setObjectUnderTest(listView);
-    @Nullable GridPane result = listView.getListView(students);
+    @Nullable GridPane result = listView.getListView();
     return (result == null) ? new GridPane() : result;
   }
 
@@ -556,6 +560,7 @@ public class JFXListViewUITests extends UITests<ListView<Student>> {
     result.setRemoveButtonHandler(removeButtonHandler);
     result.setSelectedEntitySetter(selectedStudentSetter);
     result.setSelectedIndexSetter(selectedIndexSetter);
+    result.setListSupplier(listSupplier);
     return result;
   }
 

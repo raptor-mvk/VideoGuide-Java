@@ -24,10 +24,12 @@ import ru.mvk.videoGuide.descriptor.column.ColumnInfo;
 import ru.mvk.videoGuide.exception.VideoGuideRuntimeException;
 import ru.mvk.videoGuide.view.ListView;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 public class JFXListView<EntityType> implements ListView<EntityType> {
   @NotNull
@@ -59,6 +61,8 @@ public class JFXListView<EntityType> implements ListView<EntityType> {
   @NotNull
   private Runnable removeButtonHandler = () -> {
   };
+  @NotNull
+  private Supplier<List<EntityType>> listSupplier = ArrayList::new;
 
   public JFXListView(@NotNull ListViewInfo<EntityType> listViewInfo) {
     @NotNull Class<EntityType> entityType = listViewInfo.getEntityType();
@@ -100,7 +104,8 @@ public class JFXListView<EntityType> implements ListView<EntityType> {
 
   @Nullable
   @Override
-  public GridPane getListView(@NotNull List<EntityType> objectList) {
+  public GridPane getListView() {
+    @NotNull List<EntityType> objectList = listSupplier.get();
     @NotNull ObservableList<EntityType> objectObservableList =
         FXCollections.observableList(objectList);
     tableView.setItems(objectObservableList);
@@ -149,6 +154,12 @@ public class JFXListView<EntityType> implements ListView<EntityType> {
   @Override
   public void setSelectedIndexSetter(@NotNull Consumer<Integer> indexSetter) {
     selectedIndexSetter = indexSetter;
+  }
+
+
+  @Override
+  public void setListSupplier(@NotNull Supplier<List<EntityType>> listSupplier) {
+    this.listSupplier = listSupplier;
   }
 
   @Override

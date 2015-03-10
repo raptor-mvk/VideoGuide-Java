@@ -128,6 +128,7 @@ public class VideoGuide extends Application {
 				root.setContent((Node) content);
 			}
 		});
+    viewService.setDefaultOrder("name", true);
 		return viewService;
 	}
 

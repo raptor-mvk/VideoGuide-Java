@@ -9,10 +9,11 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 public interface ListView<EntityType> {
   @Nullable
-  Object getListView(@NotNull List<EntityType> objectList);
+  Object getListView();
 
   @NotNull
   String getTableId();
@@ -37,6 +38,8 @@ public interface ListView<EntityType> {
   void setSelectedEntitySetter(@NotNull Consumer<EntityType> setter);
 
   void setSelectedIndexSetter(@NotNull Consumer<Integer> setter);
+
+  void setListSupplier(@NotNull Supplier<List<EntityType>> listSupplier);
 
   void selectRow(int index);
 

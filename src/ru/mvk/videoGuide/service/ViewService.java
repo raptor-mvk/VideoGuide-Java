@@ -21,5 +21,7 @@ public interface ViewService<EntityType> {
   Class<EntityType> getEntityType();
 
   void setContentSetter(@NotNull Consumer<Object> contentSetter);
+
+  void setDefaultOrder(@NotNull String fieldKey, boolean isAscending);
 }
 
