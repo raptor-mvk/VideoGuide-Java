@@ -27,7 +27,17 @@ public interface ListView<EntityType> {
   @NotNull
   String getRemoveButtonId();
 
-  void refreshTable(int selectedIndex);
+  void refreshTable();
+
+  void selectRowByIndex(int selectedIndex);
+
+  void selectRowByEntity(@Nullable EntityType selectedEntity);
+
+  void scrollToIndex(int index);
+
+  void scrollToEntity(@Nullable EntityType entity);
+
+  void clearSelection();
 
   void setAddButtonHandler(@NotNull Runnable handler);
 
@@ -40,8 +50,4 @@ public interface ListView<EntityType> {
   void setSelectedIndexSetter(@NotNull Consumer<Integer> setter);
 
   void setListSupplier(@NotNull Supplier<List<EntityType>> listSupplier);
-
-  void selectRow(int index);
-
-  void clearSelection();
 }

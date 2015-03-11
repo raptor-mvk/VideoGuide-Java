@@ -4,6 +4,7 @@
 
 package ru.mvk.videoGuide.service;
 
+import javafx.application.Platform;
 import org.apache.commons.beanutils.ConstructorUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -13,7 +14,6 @@ import ru.mvk.videoGuide.view.ListView;
 import ru.mvk.videoGuide.view.View;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.List;
 import java.util.function.Consumer;
 
 public class ViewServiceImpl<EntityType> implements ViewService<EntityType> {
@@ -31,7 +31,6 @@ public class ViewServiceImpl<EntityType> implements ViewService<EntityType> {
   @NotNull
   private Consumer<Object> contentSetter = (content) -> {
   };
-
 
   ViewServiceImpl(@NotNull Dao<EntityType, ?> dao, @NotNull View<EntityType> view,
                   @NotNull ListView<EntityType> listView) {
@@ -75,17 +74,19 @@ public class ViewServiceImpl<EntityType> implements ViewService<EntityType> {
 
   @Override
   public void showListView() {
-    int lastSelectedIndex = selectedIndex;
     @Nullable Object content = listView.getListView();
     contentSetter.accept(content);
-    listView.refreshTable(lastSelectedIndex);
+    listView.refreshTable();
   }
 
   @Override
   public void removeEntity() {
     if (entity != null) {
       dao.delete(entity);
+      int lastSelectedIndex = selectedIndex;
       showListView();
+      listView.selectRowByIndex(lastSelectedIndex);
+      listView.scrollToIndex(lastSelectedIndex - 1);
     }
   }
 
@@ -103,7 +104,14 @@ public class ViewServiceImpl<EntityType> implements ViewService<EntityType> {
         dao.update(entity);
       }
     }
+    @Nullable EntityType lastSelectedEntity = entity;
     showListView();
+    Platform.runLater(() -> {
+      listView.selectRowByEntity(lastSelectedEntity);
+      if (isNewEntity) {
+        listView.scrollToEntity(lastSelectedEntity);
+      }
+    });
   }
 
   @Override

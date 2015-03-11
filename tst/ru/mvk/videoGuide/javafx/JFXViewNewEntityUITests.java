@@ -171,7 +171,9 @@ public class JFXViewNewEntityUITests extends UITests<View<Student>> {
     @NotNull String lecturesTimeValueString =
         getDurationFieldExpectedText(lecturesTimeValue, false);
     emptyField(fieldId);
-    safeClickById(fieldId).type(lecturesTimeValueString);
+    @NotNull DurationField field = safeFindById(fieldId);
+    runAndWait(field::requestFocus);
+    type(lecturesTimeValueString);
     int studentLecturesTimeValue = student.getLecturesTime();
     Assert.assertEquals("input into 'lecturesTime' field should set value of " +
         "'lecturesTime'", lecturesTimeValue, studentLecturesTimeValue);

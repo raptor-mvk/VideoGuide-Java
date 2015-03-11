@@ -8,6 +8,7 @@ import javafx.application.Application;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
@@ -124,10 +125,10 @@ public class VideoGuide extends Application {
 		@NotNull ViewService<Film> viewService =
 				new FilmViewService(filmDao, filmView, filmListView);
 		viewService.setContentSetter((content) -> {
-			if (content instanceof Node) {
-				root.setContent((Node) content);
-			}
-		});
+      if (content instanceof Node) {
+        root.setContent((Node) content);
+      }
+    });
     viewService.setDefaultOrder("name", true);
 		return viewService;
 	}

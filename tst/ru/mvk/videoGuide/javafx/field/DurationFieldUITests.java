@@ -80,7 +80,7 @@ public class DurationFieldUITests extends UITests<DurationField> {
   public void mouseClickOnDigitPosition_ShouldSelectCorrespondingDigit() {
     @NotNull TextField field = safeFindById(ID);
     // caret position is empirically determined
-    int expectedCaretPosition = 4;
+    int expectedCaretPosition = 6;
     safeClickById(ID);
     int selectionStart = field.getSelection().getStart();
     Assert.assertEquals("mouse click on digit position should select corresponding digit",
@@ -112,9 +112,10 @@ public class DurationFieldUITests extends UITests<DurationField> {
   @Test
   public void mouseClickLefterThanFirstDigit_ShouldSelectTheRightestDigit() {
     @NotNull TextField field = safeFindById(ID);
+    runAndWait(() -> field.positionCaret(5));
     int expectedCaretPosition = 0;
     // coordinates are empirically determined
-    safeMoveById(ID).moveBy(-32.0, 0.0).click();
+    safeMoveById(ID).moveBy(-36.0, 0.0).click();
     int selectionStart = field.getSelection().getStart();
     Assert.assertEquals("mouse click righter than last digit should select first digit",
         expectedCaretPosition, selectionStart);

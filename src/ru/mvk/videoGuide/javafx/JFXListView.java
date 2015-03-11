@@ -4,6 +4,7 @@
 
 package ru.mvk.videoGuide.javafx;
 
+import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyIntegerProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.value.ChangeListener;
@@ -114,7 +115,7 @@ public class JFXListView<EntityType> implements ListView<EntityType> {
   }
 
   @Override
-  public void refreshTable(int selectedIndex) {
+  public void refreshTable() {
     @Nullable ObservableList<TableColumn<EntityType, ?>> columnList =
         tableView.getColumns();
     if (columnList == null) {
@@ -125,7 +126,6 @@ public class JFXListView<EntityType> implements ListView<EntityType> {
       column.setVisible(false);
       column.setVisible(true);
     }
-    selectRow(selectedIndex);
   }
 
   @Override
@@ -163,10 +163,11 @@ public class JFXListView<EntityType> implements ListView<EntityType> {
   }
 
   @Override
-  public void selectRow(int rowIndex) {
+  public void selectRowByIndex(int rowIndex) {
     @NotNull TableViewSelectionModel<EntityType> tableViewSelectionModel =
         getTableViewSelectionModel();
-    if ((rowIndex >= 0) && (rowIndex < getTableViewItemsCount())) {
+    int itemsCount = getTableViewItemsCount();
+    if ((rowIndex >= 0) && (rowIndex < itemsCount)) {
       tableViewSelectionModel.select(rowIndex);
       editButton.setDisable(false);
       removeButton.setDisable(false);
@@ -178,8 +179,38 @@ public class JFXListView<EntityType> implements ListView<EntityType> {
   }
 
   @Override
+  public void selectRowByEntity(@Nullable EntityType entity) {
+    @NotNull TableViewSelectionModel<EntityType> tableViewSelectionModel =
+        getTableViewSelectionModel();
+    if (entity != null) {
+      tableViewSelectionModel.select(entity);
+      editButton.setDisable(false);
+      removeButton.setDisable(false);
+    } else {
+      tableViewSelectionModel.clearSelection();
+      editButton.setDisable(true);
+      removeButton.setDisable(true);
+    }
+  }
+
+  @Override
+  public void scrollToIndex(int index) {
+    int itemsCount = getTableViewItemsCount();
+    if ((index >= 0) && (index < itemsCount)) {
+      tableView.scrollTo(index);
+    }
+  }
+
+  @Override
+  public void scrollToEntity(@Nullable EntityType entity) {
+    if (entity != null) {
+      tableView.scrollTo(entity);
+    }
+  }
+
+  @Override
   public void clearSelection() {
-    selectRow(-1);
+    selectRowByIndex(-1);
   }
 
   private void setKeyPressedListener() {
@@ -280,32 +311,6 @@ public class JFXListView<EntityType> implements ListView<EntityType> {
     });
   }
 
-  /*
-    private void setSortListener() {
-      tableView.setOnSort((event) -> {
-        event.consume();
-        @Nullable ObservableList<TableColumn<EntityType, ?>> sortOrder =
-            tableView.getSortOrder();
-        if (sortOrder == null) {
-          throw new VideoGuideRuntimeException("JFXListView: sortOrder is null");
-        }
-        @Nullable TableColumn<EntityType, ?> sortedColumn = sortOrder.get(0);
-        @NotNull List<EntityType> items;
-        if (sortedColumn != null) {
-          boolean isAscending =
-              sortedColumn.getSortType() == TableColumn.SortType.ASCENDING;
-          @NotNull String orderField = ((JFXTableColumn<?, ?>) sortedColumn).getColumnKey();
-          items = listGetter.apply(orderField, isAscending);
-          setColumnOrderText(sortedColumn, isAscending);
-        } else {
-          items = listGetter.apply(null, true);
-        }
-        @NotNull ObservableList<EntityType> itemsObservable =
-            FXCollections.observableList(items);
-        tableView.setItems(itemsObservable);
-      });
-    }
-  */
   private void setSelectedItemListener() {
     @Nullable TableViewSelectionModel<EntityType> tableViewSelectionModel =
         getTableViewSelectionModel();

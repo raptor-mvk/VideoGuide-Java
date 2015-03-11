@@ -101,4 +101,29 @@ public class Film implements Serializable {
   public long getAverageSize() {
     return size / filesCount;
   }
+
+  @Override
+  public boolean equals(Object o) {
+    boolean result;
+    if (this == o) {
+      result = true;
+    } else if (o == null || getClass() != o.getClass()) {
+      result = false;
+    } else {
+      Film film = (Film) o;
+      result = (disc == film.disc) && (filesCount == film.filesCount) &&
+          (id == film.id) && (length == film.length) && (size == film.size) &&
+          name.equals(film.name);
+    }
+    return result;
+  }
+
+  @Override
+  public int hashCode() {
+    int result = 31 * id  + name.hashCode();
+    result = 31 * result + length;
+    result = 31 * result + (int) (size ^ (size >>> 32));
+    result = 31 * result + (int) disc;
+    return 31 * result + (int) filesCount;
+  }
 }

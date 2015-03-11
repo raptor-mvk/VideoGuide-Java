@@ -23,7 +23,6 @@ import ru.mvk.videoGuide.test.Student;
 import ru.mvk.videoGuide.utils.UITests;
 import ru.mvk.videoGuide.view.ListView;
 
-import javax.persistence.Entity;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -98,7 +97,7 @@ public class JFXListViewUITests extends UITests<ListView<Student>> {
   @Test
   public void clearSelection_ShouldSelectNothing() {
     @NotNull ListView<Student> listView = getObjectUnderTest();
-    runAndWait(() -> listView.selectRow(0));
+    runAndWait(() -> listView.selectRowByIndex(0));
     runAndWait(listView::clearSelection);
     @Nullable Student selectedStudent = getSelectedItem(listView);
     Assert.assertNull("clearSelection() should select nothing", selectedStudent);
@@ -108,7 +107,7 @@ public class JFXListViewUITests extends UITests<ListView<Student>> {
   public void clearSelection_ShouldCallSelectedItemSetterNullParameter() {
     @NotNull ListView<Student> listView = getObjectUnderTest();
     selectedStudentState.setValue(new Student());
-    runAndWait(() -> listView.selectRow(0));
+    runAndWait(() -> listView.selectRowByIndex(0));
     runAndWait(listView::clearSelection);
     @Nullable Student selectedStudent = selectedStudentState.getValue();
     Assert.assertNull("clearSelection() should call selectedItemSetter with null " +
@@ -119,7 +118,7 @@ public class JFXListViewUITests extends UITests<ListView<Student>> {
   public void clearSelection_ShouldCallSelectedIndexSetterNegativeIndex() {
     @NotNull ListView<Student> listView = getObjectUnderTest();
     selectedIndexState.setValue(100);
-    runAndWait(() -> listView.selectRow(0));
+    runAndWait(() -> listView.selectRowByIndex(0));
     runAndWait(listView::clearSelection);
     @Nullable Integer selectedRow = selectedIndexState.getValue();
     Assert.assertEquals("clearSelection() should call selectedItemSetter with negative " +
@@ -127,111 +126,189 @@ public class JFXListViewUITests extends UITests<ListView<Student>> {
   }
 
   @Test
-  public void selectRow_PositiveIndex_ShouldSelectCorrectRow() {
+  public void selectRowByIndex_Positive_ShouldSelectCorrectRow() {
     @NotNull ListView<Student> listView = getObjectUnderTest();
     int rowToSelect = 1;
     runAndWait(listView::clearSelection);
-    runAndWait(() -> listView.selectRow(rowToSelect));
+    runAndWait(() -> listView.selectRowByIndex(rowToSelect));
     int selectedRow = getSelectedIndex(listView);
-    Assert.assertEquals("selectRow(i) should select i-th row, when i is non-negative " +
-        "and table has more rows, than i", rowToSelect, selectedRow);
+    Assert.assertEquals("selectRowByIndex(i) should select i-th row, when i is " +
+        "non-negative and table has more rows, than i", rowToSelect, selectedRow);
   }
 
   @Test
-  public void selectRow_PositiveIndex_ShouldCallSelectedItemSetter() {
+  public void selectRowByIndex_Positive_ShouldCallSelectedItemSetter() {
     @NotNull ListView<Student> listView = getObjectUnderTest();
     selectedStudentState.setValue(null);
     int rowToSelect = 1;
     @Nullable Student studentToSelect = students.get(rowToSelect);
     runAndWait(listView::clearSelection);
-    runAndWait(() -> listView.selectRow(rowToSelect));
+    runAndWait(() -> listView.selectRowByIndex(rowToSelect));
     @Nullable Student selectedStudent = selectedStudentState.getValue();
-    Assert.assertEquals("selectRow(i) should call selectedItemSetter for i-th student, " +
-            "when i is non-negative and table has more rows, than i", studentToSelect,
-        selectedStudent);
+    Assert.assertEquals("selectRowByIndex(i) should call selectedItemSetter for i-th " +
+            "student, when i is non-negative and table has more rows, than i",
+        studentToSelect, selectedStudent);
   }
 
   @Test
-  public void selectRow_PositiveIndex_ShouldCallSelectedIndexSetter() {
+  public void selectRowByIndex_Positive_ShouldCallSelectedIndexSetter() {
     @NotNull ListView<Student> listView = getObjectUnderTest();
     selectedIndexState.setValue(-1);
     int rowToSelect = 1;
     runAndWait(listView::clearSelection);
-    runAndWait(() -> listView.selectRow(rowToSelect));
+    runAndWait(() -> listView.selectRowByIndex(rowToSelect));
     @Nullable Integer selectedRow = selectedIndexState.getValue();
-    Assert.assertEquals("selectRow(i) should call selectedIndexSetter for i-th student," +
-            "when i is non-negative and table has more rows, than i",
+    Assert.assertEquals("selectRowByIndex(i) should call selectedIndexSetter for i-th " +
+            "student, when i is non-negative and table has more rows, than i",
         (Integer) rowToSelect, selectedRow);
   }
 
   @Test
-  public void selectRow_NegativeIndex_ShouldSelectNothing() {
+  public void selectRowByIndex_Negative_ShouldSelectNothing() {
     @NotNull ListView<Student> listView = getObjectUnderTest();
-    runAndWait(() -> listView.selectRow(0));
-    runAndWait(() -> listView.selectRow(-1));
+    runAndWait(() -> listView.selectRowByIndex(0));
+    runAndWait(() -> listView.selectRowByIndex(-1));
     @Nullable Student selectedStudent = getSelectedItem(listView);
-    Assert.assertNull("selectRow(i) should select nothing, when i is negative",
+    Assert.assertNull("selectRowByIndex(i) should select nothing, when i is negative",
         selectedStudent);
   }
 
   @Test
-  public void selectRow_NegativeIndex_ShouldCallSelectedItemSetterNullParameter() {
+  public void selectRowByIndex_Negative_ShouldCallSelectedItemSetterNullParameter() {
     @NotNull ListView<Student> listView = getObjectUnderTest();
     selectedStudentState.setValue(new Student());
-    runAndWait(() -> listView.selectRow(0));
-    runAndWait(() -> listView.selectRow(-1));
+    runAndWait(() -> listView.selectRowByIndex(0));
+    runAndWait(() -> listView.selectRowByIndex(-1));
     runAndWait(listView::clearSelection);
     @Nullable Student selectedStudent = selectedStudentState.getValue();
-    Assert.assertNull("selectRow(i) should call selectedItemSetter with null " +
+    Assert.assertNull("selectRowByIndex(i) should call selectedItemSetter with null " +
         "parameter, when i is negative", selectedStudent);
   }
 
   @Test
-  public void selectRow_NegativeIndex_ShouldCallSelectedIndexSetterNegativeIndex() {
+  public void selectRowByIndex_Negative_ShouldCallSelectedIndexSetterNegativeIndex() {
     @NotNull ListView<Student> listView = getObjectUnderTest();
     selectedIndexState.setValue(200);
-    runAndWait(() -> listView.selectRow(0));
-    runAndWait(() -> listView.selectRow(-3));
+    runAndWait(() -> listView.selectRowByIndex(0));
+    runAndWait(() -> listView.selectRowByIndex(-3));
     runAndWait(listView::clearSelection);
     @Nullable Integer selectedRow = selectedIndexState.getValue();
-    Assert.assertEquals("selectRow(i) should call selectedItemSetter with negative " +
-        "index, when i is negative", new Integer(-1), selectedRow);
+    Assert.assertEquals("selectRowByIndex(i) should call selectedItemSetter with " +
+        "negative index, when i is negative", new Integer(-1), selectedRow);
   }
 
   @Test
-  public void selectRow_TooLargeIndex_ShouldSelectNothing() {
+  public void selectRowByIndex_TooLarge_ShouldSelectNothing() {
     @NotNull ListView<Student> listView = getObjectUnderTest();
-    runAndWait(() -> listView.selectRow(0));
-    runAndWait(() -> listView.selectRow(100));
+    runAndWait(() -> listView.selectRowByIndex(0));
+    runAndWait(() -> listView.selectRowByIndex(100));
     @Nullable Student selectedStudent = getSelectedItem(listView);
-    Assert.assertNull("selectRow(i) should select nothing, when i is greater, than the " +
-        "number of rows in the table", selectedStudent);
+    Assert.assertNull("selectRowByIndex(i) should select nothing, when i is greater, " +
+        "than the number of rows in the table", selectedStudent);
   }
 
   @Test
-  public void selectRow_TooLargeIndex_ShouldCallSelectedItemSetterNullParameter() {
+  public void selectRowByIndex_TooLarge_ShouldCallSelectedItemSetterNullParameter() {
     @NotNull ListView<Student> listView = getObjectUnderTest();
     selectedStudentState.setValue(new Student());
-    runAndWait(() -> listView.selectRow(0));
-    runAndWait(() -> listView.selectRow(200));
+    runAndWait(() -> listView.selectRowByIndex(0));
+    runAndWait(() -> listView.selectRowByIndex(200));
     runAndWait(listView::clearSelection);
     @Nullable Student selectedStudent = selectedStudentState.getValue();
-    Assert.assertNull("selectRow(i) should call selectedItemSetter with null " +
+    Assert.assertNull("selectRowByIndex(i) should call selectedItemSetter with null " +
             "parameter, when i is greater, than the number of rows in the table",
         selectedStudent);
   }
 
   @Test
-  public void selectRow_TooLargeIndex_ShouldCallSelectedIndexSetterNegativeIndex() {
+  public void selectRowByIndex_TooLarge_ShouldCallSelectedIndexSetterNegativeIndex() {
     @NotNull ListView<Student> listView = getObjectUnderTest();
     selectedIndexState.setValue(300);
-    runAndWait(() -> listView.selectRow(0));
-    runAndWait(() -> listView.selectRow(300));
+    runAndWait(() -> listView.selectRowByIndex(0));
+    runAndWait(() -> listView.selectRowByIndex(300));
     runAndWait(listView::clearSelection);
     @Nullable Integer selectedRow = selectedIndexState.getValue();
-    Assert.assertEquals("selectRow(i) should call selectedItemSetter with negative " +
-            "index, when i is greater, than the number of rows in the table",
+    Assert.assertEquals("selectRowByIndex(i) should call selectedItemSetter with " +
+            "negative index, when i is greater, than the number of rows in the table",
         new Integer(-1), selectedRow);
+  }
+
+
+  @Test
+  public void selectRowByEntity_CorrectEntity_ShouldSelectCorrectRow() {
+    @NotNull ListView<Student> listView = getObjectUnderTest();
+    int rowToSelect = 1;
+    @NotNull Student entityToSelect = students.get(1);
+    runAndWait(listView::clearSelection);
+    runAndWait(() -> listView.selectRowByEntity(entityToSelect));
+    int selectedRow = getSelectedIndex(listView);
+    Assert.assertEquals("selectRowByEntity(entity) should select corresponding row, " +
+        "when entity belongs to list", rowToSelect, selectedRow);
+  }
+
+  @Test
+  public void selectRowByEntity_CorrectEntity_ShouldCallSelectedItemSetter() {
+    @NotNull ListView<Student> listView = getObjectUnderTest();
+    selectedStudentState.setValue(null);
+    @Nullable Student studentToSelect = students.get(1);
+    runAndWait(listView::clearSelection);
+    runAndWait(() -> listView.selectRowByEntity(studentToSelect));
+    @Nullable Student selectedStudent = selectedStudentState.getValue();
+    Assert.assertEquals("selectRowByEntity(entity) should call selectedItemSetter for " +
+            "corresponding entity, when entity belongs to list",
+        studentToSelect, selectedStudent);
+  }
+
+  @Test
+  public void selectRowByEntity_CorrectEntity_ShouldCallSelectedIndexSetter() {
+    @NotNull ListView<Student> listView = getObjectUnderTest();
+    selectedIndexState.setValue(-1);
+    int rowToSelect = 1;
+    @NotNull Student studentToSelect = students.get(rowToSelect);
+    runAndWait(listView::clearSelection);
+    runAndWait(() -> listView.selectRowByEntity(studentToSelect));
+    @Nullable Integer selectedRow = selectedIndexState.getValue();
+    Assert.assertEquals("selectRowByEntity(entity) should call selectedIndexSetter for " +
+            "corresponding entity, when entity belongs to list", (Integer) rowToSelect,
+        selectedRow);
+  }
+
+  @Test
+  public void selectRowByEntity_WrongEntity_ShouldSelectNothing() {
+    @NotNull ListView<Student> listView = getObjectUnderTest();
+    @NotNull Student studentToSelect = new Student();
+    runAndWait(() -> listView.selectRowByIndex(0));
+    runAndWait(() -> listView.selectRowByEntity(studentToSelect));
+    @Nullable Student selectedStudent = getSelectedItem(listView);
+    Assert.assertNull("selectRowByEntity(entity) should select nothing, when entity " +
+        "does not belong to list", selectedStudent);
+  }
+
+  @Test
+  public void selectRowByEntity_WrongEntity_ShouldCallSelectedItemSetterNullParameter() {
+    @NotNull ListView<Student> listView = getObjectUnderTest();
+    selectedStudentState.setValue(new Student());
+    @NotNull Student studentToSelect = new Student();
+    runAndWait(() -> listView.selectRowByIndex(0));
+    runAndWait(() -> listView.selectRowByEntity(studentToSelect));
+    runAndWait(listView::clearSelection);
+    @Nullable Student selectedStudent = selectedStudentState.getValue();
+    Assert.assertNull("selectRowByEntity(entity) should call selectedItemSetter with " +
+        "null parameter, when entity does not belong to list", selectedStudent);
+  }
+
+  @Test
+  public void selectRowByEntity_WrongEntity_ShouldCallSelectedIndexSetterNegativeIndex() {
+    @NotNull ListView<Student> listView = getObjectUnderTest();
+    @NotNull Student studentToSelect = new Student();
+    selectedIndexState.setValue(200);
+    runAndWait(() -> listView.selectRowByIndex(0));
+    runAndWait(() -> listView.selectRowByEntity(studentToSelect));
+    runAndWait(listView::clearSelection);
+    @Nullable Integer selectedRow = selectedIndexState.getValue();
+    Assert.assertEquals("selectRowByEntity(entity) should call selectedItemSetter with " +
+        "negative index, when entity does not belong to list", new Integer(-1),
+        selectedRow);
   }
 
   @Test
@@ -279,7 +356,7 @@ public class JFXListViewUITests extends UITests<ListView<Student>> {
   public void clickEdit_ShouldCallEditButtonHandler() {
     @NotNull ListView<Student> listView = getObjectUnderTest();
     editButtonState.setValue(false);
-    runAndWait(() -> listView.selectRow(1));
+    runAndWait(() -> listView.selectRowByIndex(1));
     @NotNull String editButtonId = listView.getEditButtonId();
     safeClickById(editButtonId);
     @Nullable Boolean editButtonWasClicked = editButtonState.getValue();
@@ -291,7 +368,7 @@ public class JFXListViewUITests extends UITests<ListView<Student>> {
   public void clickRemove_ShouldCallRemoveButtonHandler() {
     @NotNull ListView<Student> listView = getObjectUnderTest();
     removeButtonState.setValue(false);
-    runAndWait(() -> listView.selectRow(1));
+    runAndWait(() -> listView.selectRowByIndex(1));
     @NotNull String removeButtonId = listView.getRemoveButtonId();
     safeClickById(removeButtonId);
     @Nullable Boolean removeButtonWasClicked = removeButtonState.getValue();
@@ -322,114 +399,6 @@ public class JFXListViewUITests extends UITests<ListView<Student>> {
   }
 
   @Test
-  public void refreshTable_PositiveIndex_ShouldSelectCorrectRow() {
-    @NotNull ListView<Student> listView = getObjectUnderTest();
-    int rowToSelect = 1;
-    runAndWait(listView::clearSelection);
-    runAndWait(() -> listView.refreshTable(rowToSelect));
-    int selectedRow = getSelectedIndex(listView);
-    Assert.assertEquals("refreshTable(i) should select i-th row, when i is " +
-        "non-negative and table has more rows, than i", rowToSelect, selectedRow);
-  }
-
-  @Test
-  public void refreshTable_PositiveIndex_ShouldCallSelectedItemSetter() {
-    @NotNull ListView<Student> listView = getObjectUnderTest();
-    selectedStudentState.setValue(null);
-    int rowToSelect = 1;
-    @Nullable Student studentToSelect = students.get(rowToSelect);
-    runAndWait(listView::clearSelection);
-    runAndWait(() -> listView.refreshTable(rowToSelect));
-    @Nullable Student selectedStudent = selectedStudentState.getValue();
-    Assert.assertEquals("refreshTable(i) should call selectedItemSetter for i-th " +
-            "student, when i is non-negative and table has more rows, than i",
-        studentToSelect, selectedStudent);
-  }
-
-  @Test
-  public void refreshTable_PositiveIndex_ShouldCallSelectedIndexSetter() {
-    @NotNull ListView<Student> listView = getObjectUnderTest();
-    selectedIndexState.setValue(-1);
-    int rowToSelect = 1;
-    runAndWait(listView::clearSelection);
-    runAndWait(() -> listView.refreshTable(rowToSelect));
-    @Nullable Integer selectedRow = selectedIndexState.getValue();
-    Assert.assertEquals("refreshTable(i) should call selectedIndexSetter for i-th " +
-            "student, when i is non-negative and table has more rows, than i",
-        (Integer) rowToSelect, selectedRow);
-  }
-
-  @Test
-  public void refreshTable_NegativeIndex_ShouldSelectNothing() {
-    @NotNull ListView<Student> listView = getObjectUnderTest();
-    runAndWait(() -> listView.refreshTable(0));
-    runAndWait(() -> listView.refreshTable(-1));
-    @Nullable Student selectedStudent = getSelectedItem(listView);
-    Assert.assertNull("refreshTable(i) should select nothing, when i is negative",
-        selectedStudent);
-  }
-
-  @Test
-  public void refreshTable_NegativeIndex_ShouldCallSelectedItemSetterNullParameter() {
-    @NotNull ListView<Student> listView = getObjectUnderTest();
-    selectedStudentState.setValue(new Student());
-    runAndWait(() -> listView.refreshTable(0));
-    runAndWait(() -> listView.refreshTable(-1));
-    runAndWait(listView::clearSelection);
-    @Nullable Student selectedStudent = selectedStudentState.getValue();
-    Assert.assertNull("refreshTable(i) should call selectedItemSetter with null " +
-        "parameter, when i is negative", selectedStudent);
-  }
-
-  @Test
-  public void refreshTable_NegativeIndex_ShouldCallSelectedIndexSetterNegativeIndex() {
-    @NotNull ListView<Student> listView = getObjectUnderTest();
-    selectedIndexState.setValue(400);
-    runAndWait(() -> listView.refreshTable(0));
-    runAndWait(() -> listView.refreshTable(-3));
-    runAndWait(listView::clearSelection);
-    @Nullable Integer selectedRow = selectedIndexState.getValue();
-    Assert.assertEquals("refreshTable(i) should call selectedItemSetter with negative " +
-        "index, when i is negative", new Integer(-1), selectedRow);
-  }
-
-  @Test
-  public void refreshTable_TooLargeIndex_ShouldSelectNothing() {
-    @NotNull ListView<Student> listView = getObjectUnderTest();
-    runAndWait(() -> listView.refreshTable(0));
-    runAndWait(() -> listView.refreshTable(100));
-    @Nullable Student selectedStudent = getSelectedItem(listView);
-    Assert.assertNull("refreshTable(i) should select nothing, when i is greater, than " +
-        "the number of rows in the table", selectedStudent);
-  }
-
-  @Test
-  public void refreshTable_TooLargeIndex_ShouldCallSelectedItemSetterNullParameter() {
-    @NotNull ListView<Student> listView = getObjectUnderTest();
-    selectedStudentState.setValue(new Student());
-    runAndWait(() -> listView.refreshTable(0));
-    runAndWait(() -> listView.refreshTable(200));
-    runAndWait(listView::clearSelection);
-    @Nullable Student selectedStudent = selectedStudentState.getValue();
-    Assert.assertNull("refreshTable(i) should call selectedItemSetter with null " +
-            "parameter, when i is greater, than the number of rows in the table",
-        selectedStudent);
-  }
-
-  @Test
-  public void refreshTable_TooLargeIndex_ShouldCallSelectedIndexSetterNegativeIndex() {
-    @NotNull ListView<Student> listView = getObjectUnderTest();
-    selectedIndexState.setValue(500);
-    runAndWait(() -> listView.refreshTable(0));
-    runAndWait(() -> listView.refreshTable(300));
-    runAndWait(listView::clearSelection);
-    @Nullable Integer selectedRow = selectedIndexState.getValue();
-    Assert.assertEquals("refreshTable(i) should call selectedItemSetter with negative " +
-            "index, when i is greater, than the number of rows in the table",
-        new Integer(-1), selectedRow);
-  }
-
-  @Test
   public void insertKey_ShouldCallAddButtonHandler() {
     addButtonState.setValue(false);
     push(KeyCode.INSERT);
@@ -442,7 +411,7 @@ public class JFXListViewUITests extends UITests<ListView<Student>> {
   public void enterKey_ShouldCallEditButtonHandler() {
     @NotNull ListView<Student> listView = getObjectUnderTest();
     editButtonState.setValue(false);
-    runAndWait(() -> listView.selectRow(1));
+    runAndWait(() -> listView.selectRowByIndex(1));
     push(KeyCode.ENTER);
     @Nullable Boolean editButtonWasClicked = editButtonState.getValue();
     Assert.assertEquals("enter key button should execute editButtonHandler", true,
@@ -453,7 +422,7 @@ public class JFXListViewUITests extends UITests<ListView<Student>> {
   public void deleteKey_ShouldCallRemoveButtonHandler() {
     @NotNull ListView<Student> listView = getObjectUnderTest();
     removeButtonState.setValue(false);
-    runAndWait(() -> listView.selectRow(1));
+    runAndWait(() -> listView.selectRowByIndex(1));
     push(KeyCode.DELETE);
     @Nullable Boolean removeButtonWasClicked = removeButtonState.getValue();
     Assert.assertEquals("delete key button should execute removeButtonHandler", true,
