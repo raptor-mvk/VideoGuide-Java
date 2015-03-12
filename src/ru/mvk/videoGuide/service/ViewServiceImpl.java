@@ -29,7 +29,10 @@ public class ViewServiceImpl<EntityType> implements ViewService<EntityType> {
   private EntityType entity;
   private int selectedIndex;
   @NotNull
-  private Consumer<Object> contentSetter = (content) -> {
+  private Consumer<Object> listViewUpdater = (content) -> {
+  };
+  @NotNull
+  private Consumer<Object> viewUpdater = (content) -> {
   };
 
   ViewServiceImpl(@NotNull Dao<EntityType, ?> dao, @NotNull View<EntityType> view,
@@ -51,7 +54,7 @@ public class ViewServiceImpl<EntityType> implements ViewService<EntityType> {
     if (entity != null) {
       content = view.getView(entity, isNewEntity);
     }
-    contentSetter.accept(content);
+    viewUpdater.accept(content);
   }
 
   @NotNull
@@ -75,7 +78,7 @@ public class ViewServiceImpl<EntityType> implements ViewService<EntityType> {
   @Override
   public void showListView() {
     @Nullable Object content = listView.getListView();
-    contentSetter.accept(content);
+    listViewUpdater.accept(content);
     listView.refreshTable();
   }
 
@@ -114,9 +117,23 @@ public class ViewServiceImpl<EntityType> implements ViewService<EntityType> {
     });
   }
 
+  private void cancelUpdateEntity() {
+    @Nullable EntityType lastSelectedEntity = entity;
+    showListView();
+    Platform.runLater(() -> {
+      listView.selectRowByEntity(lastSelectedEntity);
+      listView.scrollToEntity(lastSelectedEntity);
+    });
+  }
+
   @Override
-  public void setContentSetter(@NotNull Consumer<Object> contentSetter) {
-    this.contentSetter = contentSetter;
+  public void setListViewUpdater(@NotNull Consumer<Object> listViewUpdater) {
+    this.listViewUpdater = listViewUpdater;
+  }
+
+  @Override
+  public void setViewUpdater(@NotNull Consumer<Object> viewUpdater) {
+    this.viewUpdater = viewUpdater;
   }
 
   @Override
@@ -134,7 +151,7 @@ public class ViewServiceImpl<EntityType> implements ViewService<EntityType> {
 
   private void prepareView() {
     view.setSaveButtonHandler(this::updateEntity);
-    view.setCancelButtonHandler(this::showListView);
+    view.setCancelButtonHandler(this::cancelUpdateEntity);
   }
 
   private void prepareListView() {

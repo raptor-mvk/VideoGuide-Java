@@ -124,7 +124,12 @@ public class VideoGuide extends Application {
 	private ViewService<Film> prepareFilmViewService() {
 		@NotNull ViewService<Film> viewService =
 				new FilmViewService(filmDao, filmView, filmListView);
-		viewService.setContentSetter((content) -> {
+		viewService.setViewUpdater((content) -> {
+      if (content instanceof Node) {
+        root.setContent((Node) content);
+      }
+    });
+    viewService.setListViewUpdater((content) -> {
       if (content instanceof Node) {
         root.setContent((Node) content);
       }

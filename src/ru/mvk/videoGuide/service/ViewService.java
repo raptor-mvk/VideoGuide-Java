@@ -20,7 +20,9 @@ public interface ViewService<EntityType> {
   @NotNull
   Class<EntityType> getEntityType();
 
-  void setContentSetter(@NotNull Consumer<Object> contentSetter);
+  void setListViewUpdater(@NotNull Consumer<Object> listViewUpdater);
+
+  void setViewUpdater(@NotNull Consumer<Object> viewUpdater);
 
   void setDefaultOrder(@NotNull String fieldKey, boolean isAscending);
 }
