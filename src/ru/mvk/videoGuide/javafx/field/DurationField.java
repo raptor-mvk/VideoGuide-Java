@@ -6,6 +6,7 @@ package ru.mvk.videoGuide.javafx.field;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import ru.mvk.videoGuide.descriptor.field.DurationFieldInfo;
+import ru.mvk.videoGuide.descriptor.field.SizedFieldInfo;
 import ru.mvk.videoGuide.exception.VideoGuideRuntimeException;
 
 import java.util.function.Consumer;
@@ -25,7 +26,7 @@ public class DurationField extends MaskedTextField implements Field<Integer> {
     return result.append(":##:##").toString();
   }
 
-  public DurationField(@NotNull DurationFieldInfo fieldInfo) {
+  public DurationField(@NotNull SizedFieldInfo fieldInfo) {
     super(prepareMask(fieldInfo.getWidth()));
     @NotNull Matcher matcher = prepareMatcher(fieldInfo.getWidth());
     setFieldMatcher(matcher);

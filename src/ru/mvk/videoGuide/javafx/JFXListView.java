@@ -4,7 +4,6 @@
 
 package ru.mvk.videoGuide.javafx;
 
-import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyIntegerProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.value.ChangeListener;
@@ -184,6 +183,15 @@ public class JFXListView<EntityType> implements ListView<EntityType> {
         getTableViewSelectionModel();
     if (entity != null) {
       tableViewSelectionModel.select(entity);
+      int selectedIndex = tableViewSelectionModel.getSelectedIndex();
+      @Nullable ObservableList<EntityType> itemList = tableView.getItems();
+      if (itemList == null) {
+        throw new VideoGuideRuntimeException("JFXListView: itemList is null");
+      }
+      @Nullable EntityType selectedEntity = itemList.get(selectedIndex);
+      if(!entity.equals(selectedEntity)) {
+        tableViewSelectionModel.clearSelection();
+      }
       editButton.setDisable(false);
       removeButton.setDisable(false);
     } else {

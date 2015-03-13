@@ -9,7 +9,10 @@ import org.apache.commons.beanutils.ConstructorUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ru.mvk.videoGuide.dao.Dao;
+import ru.mvk.videoGuide.descriptor.ListViewInfo;
+import ru.mvk.videoGuide.descriptor.ViewInfo;
 import ru.mvk.videoGuide.exception.VideoGuideRuntimeException;
+import ru.mvk.videoGuide.view.Layout;
 import ru.mvk.videoGuide.view.ListView;
 import ru.mvk.videoGuide.view.View;
 
@@ -25,22 +28,26 @@ public class ViewServiceImpl<EntityType> implements ViewService<EntityType> {
   private final View<EntityType> view;
   @NotNull
   private final ListView<EntityType> listView;
+  @NotNull
+  private final Consumer<Object> listViewUpdater;
+  @NotNull
+  private final Consumer<Object> viewUpdater;
   @Nullable
   private EntityType entity;
   private int selectedIndex;
-  @NotNull
-  private Consumer<Object> listViewUpdater = (content) -> {
-  };
-  @NotNull
-  private Consumer<Object> viewUpdater = (content) -> {
-  };
 
-  ViewServiceImpl(@NotNull Dao<EntityType, ?> dao, @NotNull View<EntityType> view,
-                  @NotNull ListView<EntityType> listView) {
+  public ViewServiceImpl(@NotNull ViewServiceDescriptor<EntityType> viewServiceDescriptor,
+                         @NotNull Layout layout, @NotNull String serviceKey) {
+    dao = viewServiceDescriptor.getDao();
     entityType = dao.getEntityType();
-    this.dao = dao;
-    this.view = view;
-    this.listView = listView;
+    @NotNull ViewInfo<EntityType> viewInfo = viewServiceDescriptor.getViewInfo();
+    view = layout.getView(viewInfo);
+    @NotNull ListViewInfo<EntityType> listViewInfo =
+        viewServiceDescriptor.getListViewInfo();
+    this.listView = layout.getListView(listViewInfo);
+    int serviceId = layout.registerViewService(serviceKey);
+    viewUpdater = layout.getViewUpdater(serviceId);
+    listViewUpdater = layout.getListViewUpdater(serviceId);
     prepareView();
     prepareListView();
   }
@@ -124,16 +131,6 @@ public class ViewServiceImpl<EntityType> implements ViewService<EntityType> {
       listView.selectRowByEntity(lastSelectedEntity);
       listView.scrollToEntity(lastSelectedEntity);
     });
-  }
-
-  @Override
-  public void setListViewUpdater(@NotNull Consumer<Object> listViewUpdater) {
-    this.listViewUpdater = listViewUpdater;
-  }
-
-  @Override
-  public void setViewUpdater(@NotNull Consumer<Object> viewUpdater) {
-    this.viewUpdater = viewUpdater;
   }
 
   @Override

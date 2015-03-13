@@ -181,7 +181,6 @@ public class JFXViewNewEntityUITests extends UITests<View<Student>> {
 
   @Test
   public void enterKey_ShouldCallSaveButtonHandlerWithTrueParameter() {
-    @NotNull View<Student> view = getObjectUnderTest();
     saveButtonState.setValue(false);
     push(KeyCode.ENTER);
     @Nullable Boolean saveButtonWasClicked = saveButtonState.getValue();
@@ -191,7 +190,6 @@ public class JFXViewNewEntityUITests extends UITests<View<Student>> {
 
   @Test
   public void escapeKey_ShouldCallCancelButtonHandler() {
-    @NotNull View<Student> view = getObjectUnderTest();
     cancelButtonState.setValue(false);
     push(KeyCode.ESCAPE);
     @Nullable Boolean cancelButtonWasClicked = cancelButtonState.getValue();

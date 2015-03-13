@@ -13,6 +13,7 @@ import ru.mvk.videoGuide.dao.Dao;
 import ru.mvk.videoGuide.dao.DaoImpl;
 import ru.mvk.videoGuide.module.db.DbController;
 import ru.mvk.videoGuide.module.db.HibernateAdapter;
+import ru.mvk.videoGuide.module.db.HibernateAdapterImpl;
 import ru.mvk.videoGuide.test.SQLiteTestDbController;
 import ru.mvk.videoGuide.test.TestObject;
 import ru.mvk.videoGuide.utils.SQLiteHelper;
@@ -28,11 +29,13 @@ public class DbIntegrationTests {
   private final int APP_ID = 0x002d2514;
   private final int APP_DB_VERSION = 3;
   @NotNull
-  private SQLiteHelper sqLiteHelper = new SQLiteHelper();
+  private final SQLiteHelper sqLiteHelper = new SQLiteHelper();
   @NotNull
-  private SessionFactory sessionFactory = sqLiteHelper.prepareSessionFactory(DB_FILENAME);
+  private final SessionFactory sessionFactory =
+      sqLiteHelper.prepareSessionFactory(DB_FILENAME);
   @NotNull
-  private HibernateAdapter hibernateAdapter = new HibernateAdapter(sessionFactory);
+  private final HibernateAdapter hibernateAdapter =
+      new HibernateAdapterImpl(sessionFactory);
 
   @Test
   public void daoImplCreate_ShouldCreateDatabaseEntry() {

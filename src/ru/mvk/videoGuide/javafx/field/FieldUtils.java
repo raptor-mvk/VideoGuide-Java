@@ -56,9 +56,6 @@ public class FieldUtils {
   private static final Map<Class<?>, Matcher> NUMBER_MATCHER_MAP = initNumberMatcherMap();
   @NotNull
   private static final Map<Class<?>, Matcher> ZERO_EQUAL_MATCHER_MAP = initZeroEqualMap();
-  @NotNull
-  private static final Map<Class<? extends NamedFieldInfo>, Class<? extends Node>>
-      FIELD_INFO_TO_FIELD_MAP = initFieldInfoToFieldMap();
 
   @NotNull
   private static Map<Class<?>, Function<String, ?>> initTypeCastersMap() {
@@ -91,20 +88,6 @@ public class FieldUtils {
   }
 
   @NotNull
-  private static Map<Class<? extends NamedFieldInfo>,
-      Class<? extends Node>> initFieldInfoToFieldMap() {
-    @NotNull Map<Class<? extends NamedFieldInfo>, Class<? extends Node>> result =
-        new HashMap<>();
-    result.put(CheckBoxInfo.class, CheckBoxField.class);
-    result.put(TextFieldInfo.class, LimitedTextField.class);
-    result.put(NaturalFieldInfo.class, NaturalField.class);
-    result.put(IntegerFieldInfo.class, IntegerField.class);
-    result.put(RealFieldInfo.class, RealField.class);
-    result.put(DurationFieldInfo.class, DurationField.class);
-    return result;
-  }
-
-  @NotNull
   static Matcher getNumberMatcher(@NotNull Class<?> fieldType) {
     @Nullable Matcher result = NUMBER_MATCHER_MAP.get(fieldType);
     if (result == null) {
@@ -130,29 +113,6 @@ public class FieldUtils {
     if (result == null) {
       throw new VideoGuideRuntimeException("FieldUtils: Unsupported class '" + type +
           "'");
-    }
-    return result;
-  }
-
-  @NotNull
-  public static Node getField(@NotNull NamedFieldInfo fieldInfo) {
-    @Nullable Node result = null;
-    try {
-      @Nullable Class<? extends NamedFieldInfo> fieldInfoClass = fieldInfo.getClass();
-      @Nullable Class<? extends Node> fieldClass =
-          FIELD_INFO_TO_FIELD_MAP.get(fieldInfoClass);
-      if (fieldClass != null) {
-        result = (fieldInfo instanceof SizedFieldInfo) ?
-            ConstructorUtils.invokeConstructor(fieldClass, new Object[]{fieldInfo}) :
-            ConstructorUtils.invokeConstructor(fieldClass, new Object[]{});
-      }
-    } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException |
-        InstantiationException e) {
-      throw new VideoGuideRuntimeException("FieldUtils: Could not run constructor for " +
-          "field");
-    }
-    if (result == null) {
-      throw new VideoGuideRuntimeException("FieldUtils: Unsupported field type");
     }
     return result;
   }

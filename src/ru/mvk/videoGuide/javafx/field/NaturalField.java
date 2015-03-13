@@ -8,6 +8,7 @@ import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ru.mvk.videoGuide.descriptor.field.NaturalFieldInfo;
 import ru.mvk.videoGuide.descriptor.field.NumberFieldInfo;
 import ru.mvk.videoGuide.exception.VideoGuideRuntimeException;
 
@@ -32,7 +33,7 @@ public class NaturalField<Type> extends SizedTextField implements Field<Type> {
     type = fieldInfo.getType();
     @Nullable Class<?> fieldType = getClass();
     if (fieldType == null) {
-      throw new VideoGuideRuntimeException("NaturalField: illegal field type");
+      throw new VideoGuideRuntimeException("NaturalField: fieldInfo class is null");
     }
     numberMatcher = FieldUtils.getNumberMatcher(fieldType);
     zeroEqualMatcher = FieldUtils.getZeroEqualMatcher(fieldType);

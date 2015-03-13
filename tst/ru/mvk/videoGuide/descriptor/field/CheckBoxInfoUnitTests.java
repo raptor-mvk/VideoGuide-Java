@@ -7,6 +7,7 @@ package ru.mvk.videoGuide.descriptor.field;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Assert;
 import org.junit.Test;
+import ru.mvk.videoGuide.javafx.field.CheckBoxField;
 
 public class CheckBoxInfoUnitTests {
   @Test

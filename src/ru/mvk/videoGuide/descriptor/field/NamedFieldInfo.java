@@ -9,4 +9,7 @@ import org.jetbrains.annotations.NotNull;
 public interface NamedFieldInfo {
   @NotNull
   String getName();
+
+  @NotNull
+  String getJFXFieldClassName();
 }

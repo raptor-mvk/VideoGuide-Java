@@ -273,6 +273,7 @@ public class JFXListViewUITests extends UITests<ListView<Student>> {
         selectedRow);
   }
 
+
   @Test
   public void selectRowByEntity_WrongEntity_ShouldSelectNothing() {
     @NotNull ListView<Student> listView = getObjectUnderTest();
@@ -291,7 +292,6 @@ public class JFXListViewUITests extends UITests<ListView<Student>> {
     @NotNull Student studentToSelect = new Student();
     runAndWait(() -> listView.selectRowByIndex(0));
     runAndWait(() -> listView.selectRowByEntity(studentToSelect));
-    runAndWait(listView::clearSelection);
     @Nullable Student selectedStudent = selectedStudentState.getValue();
     Assert.assertNull("selectRowByEntity(entity) should call selectedItemSetter with " +
         "null parameter, when entity does not belong to list", selectedStudent);
@@ -304,10 +304,9 @@ public class JFXListViewUITests extends UITests<ListView<Student>> {
     selectedIndexState.setValue(200);
     runAndWait(() -> listView.selectRowByIndex(0));
     runAndWait(() -> listView.selectRowByEntity(studentToSelect));
-    runAndWait(listView::clearSelection);
     @Nullable Integer selectedRow = selectedIndexState.getValue();
     Assert.assertEquals("selectRowByEntity(entity) should call selectedItemSetter with " +
-        "negative index, when entity does not belong to list", new Integer(-1),
+            "negative index, when entity does not belong to list", new Integer(-1),
         selectedRow);
   }
 

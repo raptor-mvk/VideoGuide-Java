@@ -9,8 +9,8 @@ import ru.mvk.videoGuide.module.db.HibernateAdapter;
 import ru.mvk.videoGuide.module.db.SQLiteAbstractDbController;
 
 public class SQLiteTestDbController extends SQLiteAbstractDbController {
-  private int appId;
-  private int appDbVersion;
+  private final int appId;
+  private final int appDbVersion;
 
   public SQLiteTestDbController(@NotNull HibernateAdapter hibernateAdapter, int appId,
                                 int appDbVersion) {

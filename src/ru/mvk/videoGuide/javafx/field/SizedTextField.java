@@ -19,15 +19,16 @@ abstract class SizedTextField extends BasicSizedTextField {
                              @NotNull String newValue) {
     int newLength = newValue.length();
     int oldLength = oldValue.length();
-    caretPositionShift = (newLength > oldLength) ? oldLength - newLength : 0;
+    int caretPosition = getCaretPosition();
+    caretPositionShift = (newLength > oldLength && caretPosition < oldLength) ?
+        oldLength - newLength : 0;
     setText(oldValue);
   }
 
   private void setKeyListener() {
-    setOnKeyReleased((value) -> {
+    setOnKeyReleased((event) -> {
       int caretPosition = getCaretPosition();
-      int textLength = getLength();
-      if (caretPositionShift != 0 && caretPosition < textLength) {
+      if (caretPositionShift != 0) {
         positionCaret(caretPosition + caretPositionShift);
         caretPositionShift = 0;
       }

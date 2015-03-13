@@ -80,8 +80,17 @@ public class SQLiteHelper {
     return configuration.buildSessionFactory(serviceRegistry);
   }
 
+  public void removeDbFile(@NotNull SessionFactory sessionFactory,
+                           @NotNull String dbFileName) {
+    sessionFactory.close();
+    boolean result = new File(dbFileName).delete();
+    if (!result) {
+      throw new RuntimeException("Could not remove db file");
+    }
+  }
+
   @NotNull
-  public Configuration prepareConfiguration(@NotNull String dbFileName) {
+  private Configuration prepareConfiguration(@NotNull String dbFileName) {
     @NotNull Configuration configuration = new Configuration();
     @NotNull Properties properties = new Properties();
     properties.put("hibernate.connection.driver_class", "org.sqlite.JDBC");
@@ -93,12 +102,4 @@ public class SQLiteHelper {
     return configuration;
   }
 
-  public void removeDbFile(@NotNull SessionFactory sessionFactory,
-                           @NotNull String dbFileName) {
-    sessionFactory.close();
-    boolean result = new File(dbFileName).delete();
-    if (!result) {
-      throw new RuntimeException("Could not remove db file");
-    }
-  }
 }

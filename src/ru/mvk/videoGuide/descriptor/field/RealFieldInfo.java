@@ -5,8 +5,9 @@
 package ru.mvk.videoGuide.descriptor.field;
 
 import org.jetbrains.annotations.NotNull;
+import ru.mvk.videoGuide.exception.VideoGuideRuntimeException;
 
-public class RealFieldInfo<Type> extends NumberFieldInfoImpl<Type> {
+public class RealFieldInfo<Type> extends NaturalFieldInfo<Type> {
   public RealFieldInfo(@NotNull Class<Type> type, @NotNull String name, int width) {
     super(type, name, width);
   }
@@ -14,5 +15,11 @@ public class RealFieldInfo<Type> extends NumberFieldInfoImpl<Type> {
   @Override
   boolean isTypeCorrect(@NotNull Class<Type> type) {
     return type.equals(Float.class) || type.equals(Double.class);
+  }
+
+  @NotNull
+  @Override
+  public String getJFXFieldClassName() {
+    return "ru.mvk.videoGuide.javafx.field.RealField";
   }
 }

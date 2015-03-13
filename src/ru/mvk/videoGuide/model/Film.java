@@ -12,7 +12,7 @@ import static javax.persistence.GenerationType.IDENTITY;
 
 @Entity
 @Table(name = "film")
-public class Film implements Serializable {
+public final class Film implements Serializable {
   @Id
   @GeneratedValue(strategy = IDENTITY)
   @Column(name = "rowid", nullable = false, unique = true)
@@ -120,7 +120,7 @@ public class Film implements Serializable {
 
   @Override
   public int hashCode() {
-    int result = 31 * id  + name.hashCode();
+    int result = 31 * id + name.hashCode();
     result = 31 * result + length;
     result = 31 * result + (int) (size ^ (size >>> 32));
     result = 31 * result + (int) disc;

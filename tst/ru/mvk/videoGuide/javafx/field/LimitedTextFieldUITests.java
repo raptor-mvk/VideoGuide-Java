@@ -63,14 +63,27 @@ public class LimitedTextFieldUITests extends UITests<LimitedTextField> {
 
   @Test
   public void inputIntoFilledField_ShouldNotMoveCaret() {
-    @NotNull String inputText = "Triangulation";
+    @NotNull String inputText = "Obliteration";
     safeClickById(ID).type(inputText);
-    type(KeyCode.HOME);
     type("a");
     @NotNull TextField field = safeFindById(ID);
     int caretPosition = field.getCaretPosition();
-    Assert.assertEquals("input into filled field should not move caret", 0,
-        caretPosition);
+    int expectedCaretPosition = inputText.length();
+    Assert.assertEquals("input into filled field should not move caret",
+        expectedCaretPosition, caretPosition);
+  }
+
+  @Test
+  public void inputInsideFilledField_ShouldNotMoveCaret() {
+    @NotNull String inputText = "Refrigerator";
+    safeClickById(ID).type(inputText);
+    type(KeyCode.LEFT);
+    type("a");
+    @NotNull TextField field = safeFindById(ID);
+    int caretPosition = field.getCaretPosition();
+    int expectedCaretPosition = inputText.length() - 1;
+    Assert.assertEquals("input inside filled field should not move caret",
+        expectedCaretPosition, caretPosition);
   }
 
   @Test

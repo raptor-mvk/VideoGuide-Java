@@ -12,9 +12,9 @@ import java.util.List;
 
 public abstract class SQLiteAbstractDbController implements DbController {
   @NotNull
-  private HibernateAdapter hibernateAdapter;
+  private final HibernateAdapter hibernateAdapter;
 
-  public SQLiteAbstractDbController(@NotNull HibernateAdapter hibernateAdapter) {
+  protected SQLiteAbstractDbController(@NotNull HibernateAdapter hibernateAdapter) {
     this.hibernateAdapter = hibernateAdapter;
   }
 

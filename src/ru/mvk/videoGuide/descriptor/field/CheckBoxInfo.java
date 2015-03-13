@@ -10,4 +10,10 @@ public class CheckBoxInfo extends NamedFieldInfoImpl {
   public CheckBoxInfo(@NotNull String name) {
     super(name);
   }
+
+  @NotNull
+  @Override
+  public String getJFXFieldClassName() {
+    return "ru.mvk.videoGuide.javafx.field.CheckBoxField";
+  }
 }

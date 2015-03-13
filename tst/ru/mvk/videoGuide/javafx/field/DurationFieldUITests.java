@@ -115,7 +115,7 @@ public class DurationFieldUITests extends UITests<DurationField> {
     runAndWait(() -> field.positionCaret(5));
     int expectedCaretPosition = 0;
     // coordinates are empirically determined
-    safeMoveById(ID).moveBy(-36.0, 0.0).click();
+    safeMoveById(ID).moveBy(-32.0, 0.0).click();
     int selectionStart = field.getSelection().getStart();
     Assert.assertEquals("mouse click righter than last digit should select first digit",
         expectedCaretPosition, selectionStart);

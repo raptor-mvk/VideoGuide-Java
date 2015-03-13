@@ -9,7 +9,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
-public class Student {
+public final class Student {
   private int id;
   @NotNull
   private String name;

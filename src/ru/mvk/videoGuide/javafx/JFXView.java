@@ -11,16 +11,18 @@ import javafx.scene.control.Label;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.GridPane;
 import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.commons.lang3.reflect.ConstructorUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ru.mvk.videoGuide.descriptor.ViewInfo;
 import ru.mvk.videoGuide.descriptor.field.NamedFieldInfo;
+import ru.mvk.videoGuide.descriptor.field.SizedFieldInfo;
 import ru.mvk.videoGuide.exception.VideoGuideRuntimeException;
 import ru.mvk.videoGuide.javafx.field.Field;
-import ru.mvk.videoGuide.javafx.field.FieldUtils;
 import ru.mvk.videoGuide.view.View;
 
 import java.beans.PropertyDescriptor;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
@@ -152,7 +154,7 @@ public class JFXView<EntityType> implements View<EntityType> {
 
   private void prepareField(int index, @NotNull String fieldKey,
                             @NotNull NamedFieldInfo fieldInfo) {
-    @NotNull Node field = FieldUtils.getField(fieldInfo);
+    @NotNull Node field = getField(fieldInfo);
     @NotNull String fieldId = getFieldId(fieldKey);
     field.setId(fieldId);
     fields.put(fieldKey, field);
@@ -205,7 +207,7 @@ public class JFXView<EntityType> implements View<EntityType> {
   private void setFieldValue(@NotNull String fieldKey,
                              @NotNull EntityType object) {
     try {
-      @NotNull Node field = getField(fieldKey);
+      @NotNull Node field = getFieldNode(fieldKey);
       @NotNull PropertyDescriptor propertyDescriptor =
           getPropertyDescriptor(fieldKey, object);
       @NotNull Object value = getFieldValue(propertyDescriptor, object);
@@ -223,11 +225,77 @@ public class JFXView<EntityType> implements View<EntityType> {
   }
 
   @NotNull
-  private Node getField(@NotNull String fieldKey) {
+  private Node getFieldNode(@NotNull String fieldKey) {
     @Nullable Node result = fields.get(fieldKey);
     if (result == null) {
       throw new VideoGuideRuntimeException("JFXView: field '" + fieldKey + "' was not " +
           "found");
+    }
+    return result;
+  }
+
+  @NotNull
+  public Node getField(@NotNull NamedFieldInfo fieldInfo) {
+    @Nullable Object fieldInstance = null;
+    @Nullable String fieldClassName = fieldInfo.getJFXFieldClassName();
+    @Nullable Class<?> fieldClass = null;
+    try {
+      fieldClass = Class.forName(fieldClassName);
+    } catch (ClassNotFoundException e) {
+      throw new VideoGuideRuntimeException("FieldUtils: Could not load class " +
+          fieldClassName);
+    }
+    if (fieldClass != null) {
+      if (fieldInfo instanceof SizedFieldInfo) {
+        fieldInstance = instantiateSizedField(fieldClass, (SizedFieldInfo) fieldInfo);
+      } else {
+        fieldInstance = instantiateNamedField(fieldClass);
+      }
+    }
+    if (!(fieldInstance instanceof Node)) {
+      throw new VideoGuideRuntimeException("JFXView: instantiated field is not " +
+          "JavaFX Node");
+    }
+    return (Node) fieldInstance;
+  }
+
+  @NotNull
+  private Object instantiateSizedField(@NotNull Class<?> fieldClass,
+                                       @NotNull SizedFieldInfo fieldInfo) {
+    @NotNull Object result;
+    @Nullable Class<?> fieldInfoClass = fieldInfo.getClass();
+    if (fieldInfoClass == null) {
+      throw new VideoGuideRuntimeException("JFXView: fieldInfo class is null");
+    }
+    @Nullable Constructor fieldConstructor =
+        ConstructorUtils.getMatchingAccessibleConstructor(fieldClass, fieldInfoClass);
+    if (fieldConstructor == null) {
+      throw new VideoGuideRuntimeException("Could not get constructor for " + fieldClass);
+    }
+    try {
+      result = fieldConstructor.newInstance(fieldInfo);
+    } catch (InstantiationException | IllegalAccessException |
+        InvocationTargetException e) {
+      throw new VideoGuideRuntimeException("JFXView: Could not instantiate field for " +
+          fieldClass);
+    }
+    return result;
+  }
+
+  @NotNull
+  private Object instantiateNamedField(@NotNull Class<?> fieldClass) {
+    @NotNull Object result;
+    @Nullable Constructor fieldConstructor =
+        ConstructorUtils.getMatchingAccessibleConstructor(fieldClass);
+    if (fieldConstructor == null) {
+      throw new VideoGuideRuntimeException("Could not get constructor for " + fieldClass);
+    }
+    try {
+      result = fieldConstructor.newInstance();
+    } catch (InstantiationException | IllegalAccessException |
+        InvocationTargetException e) {
+      throw new VideoGuideRuntimeException("JFXView: Could not instantiate field for " +
+          fieldClass);
     }
     return result;
   }

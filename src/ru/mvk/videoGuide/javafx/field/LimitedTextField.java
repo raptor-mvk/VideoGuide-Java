@@ -8,6 +8,7 @@ import javafx.beans.property.StringProperty;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ru.mvk.videoGuide.descriptor.field.SizedFieldInfo;
+import ru.mvk.videoGuide.descriptor.field.TextFieldInfo;
 import ru.mvk.videoGuide.exception.VideoGuideRuntimeException;
 
 import java.util.function.Consumer;

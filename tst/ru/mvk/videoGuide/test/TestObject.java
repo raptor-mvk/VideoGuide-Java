@@ -11,7 +11,7 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "object")
-public class TestObject {
+public final class TestObject {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "rowid", nullable = false, unique = true)

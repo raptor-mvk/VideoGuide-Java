@@ -6,7 +6,7 @@ package ru.mvk.videoGuide.test;
 
 import org.jetbrains.annotations.Nullable;
 
-public class FieldValueTester<Type> {
+public final class FieldValueTester<Type> {
   @Nullable
   private Type value;
 

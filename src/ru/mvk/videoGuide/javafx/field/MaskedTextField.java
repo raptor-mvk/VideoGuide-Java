@@ -67,7 +67,7 @@ abstract class MaskedTextField extends BasicSizedTextField {
     }
   }
 
-  public void setFieldMatcher(@NotNull Matcher fieldMatcher) {
+  void setFieldMatcher(@NotNull Matcher fieldMatcher) {
     this.fieldMatcher = fieldMatcher;
   }
 

@@ -9,6 +9,7 @@ import org.jetbrains.annotations.NotNull;
 import org.junit.Assert;
 import org.junit.Test;
 import ru.mvk.videoGuide.module.db.HibernateAdapter;
+import ru.mvk.videoGuide.module.db.HibernateAdapterImpl;
 import ru.mvk.videoGuide.utils.PowerMockUtils;
 
 public class DaoImplUnitTests {
@@ -17,7 +18,7 @@ public class DaoImplUnitTests {
     @NotNull Class<Object> expectedEntityType = Object.class;
     @NotNull Session session = PowerMockUtils.mock(Session.class);
     @NotNull SessionFactory sessionFactory = prepareSessionFactory(session);
-    @NotNull HibernateAdapter hibernateAdapter = new HibernateAdapter(sessionFactory);
+    @NotNull HibernateAdapter hibernateAdapter = new HibernateAdapterImpl(sessionFactory);
     @NotNull Dao<Object, Integer> dao = new DaoImpl<>(expectedEntityType,
         Integer.class, hibernateAdapter);
     @NotNull Class<?> entityType = dao.getEntityType();
