@@ -19,6 +19,7 @@ import ru.mvk.videoGuide.descriptor.ViewInfo;
 import ru.mvk.videoGuide.descriptor.ViewInfoImpl;
 import ru.mvk.videoGuide.descriptor.column.DurationColumnInfo;
 import ru.mvk.videoGuide.descriptor.column.FileSizeColumnInfo;
+import ru.mvk.videoGuide.descriptor.column.LowerStringColumnInfo;
 import ru.mvk.videoGuide.descriptor.column.StringColumnInfo;
 import ru.mvk.videoGuide.descriptor.field.NaturalFieldInfo;
 import ru.mvk.videoGuide.descriptor.field.TextFieldInfo;
@@ -100,7 +101,7 @@ public class VideoGuide extends Application {
   @NotNull
   private ListViewInfo<Film> prepareFilmListViewInfo() {
     @NotNull ListViewInfo<Film> listViewInfo = new ListViewInfoImpl<>(Film.class);
-    listViewInfo.addColumnInfo("name", new StringColumnInfo("Название", 60));
+    listViewInfo.addColumnInfo("lowerName", new LowerStringColumnInfo("Название", 60));
     listViewInfo.addColumnInfo("length", new DurationColumnInfo("Длит.", 10));
     listViewInfo.addColumnInfo("size", new FileSizeColumnInfo("Размер", 10));
     listViewInfo.addColumnInfo("disc", new StringColumnInfo("Диск", 8));
@@ -116,7 +117,7 @@ public class VideoGuide extends Application {
         new ViewServiceDescriptor<>(filmDao, filmViewInfo, filmListViewInfo);
     @NotNull ViewService<Film> viewService =
         new FilmViewService(viewServiceDescriptor, layout);
-    viewService.setDefaultOrder("name", true);
+    viewService.setDefaultOrder("lowerName", true);
     return viewService;
   }
 

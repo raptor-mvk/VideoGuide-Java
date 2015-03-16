@@ -6,6 +6,8 @@ package ru.mvk.videoGuide.module.db;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
+
 public class VideoGuideDbController extends SQLiteAbstractDbController {
   public VideoGuideDbController(@NotNull HibernateAdapter hibernateAdapter) {
     super(hibernateAdapter);
@@ -13,13 +15,24 @@ public class VideoGuideDbController extends SQLiteAbstractDbController {
 
   @Override
   protected boolean updateDbSchema(int fromDbVersion) {
+    if (fromDbVersion == 1) {
+      execute("alter table film add column lowerName text");
+      List<?> rows = executeQuery("select rowid, name from film;");
+      for (Object row : rows) {
+        @NotNull String id = ((Object[]) row)[0].toString();
+        @NotNull String name = ((Object[]) row)[1].toString().toLowerCase();
+        @NotNull String sqlQuery = "update film set lowerName='" + name +
+            "' where rowid=" + id + ';';
+        execute(sqlQuery);
+      }
+    }
     return true;
   }
 
   @Override
   protected boolean createDbSchema() {
-    execute("create table film (name text, length int, size int, disc int, " +
-        "filesCount int);");
+    execute("create table film (name text, lowerName text, length int, size int, " +
+        "disc int, filesCount int);");
     return true;
   }
 
@@ -30,6 +43,6 @@ public class VideoGuideDbController extends SQLiteAbstractDbController {
 
   @Override
   protected int getAppDbVersion() {
-    return 1;
+    return 2;
   }
 }

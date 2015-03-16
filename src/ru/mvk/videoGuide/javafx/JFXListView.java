@@ -403,4 +403,14 @@ public class JFXListView<EntityType> implements ListView<EntityType> {
     }
     return result;
   }
+
+  @NotNull
+  private ObservableList<TableColumn<EntityType, ?>> prepareSortOrder() {
+    @Nullable ObservableList<TableColumn<EntityType, ?>> result =
+        tableView.getSortOrder();
+    if (result == null) {
+      throw new VideoGuideRuntimeException("JFXListView: sortOrder is null");
+    }
+    return result;
+  }
 }

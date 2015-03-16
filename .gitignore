@@ -3,3 +3,4 @@ out/*
 .idea/uiDesigner.xml
 *.png
 *.sqlite
+sqlite3.exe

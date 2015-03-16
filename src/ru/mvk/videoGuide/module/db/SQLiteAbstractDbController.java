@@ -6,8 +6,10 @@ package ru.mvk.videoGuide.module.db;
 import org.hibernate.Query;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ru.mvk.videoGuide.core.VideoGuide;
 import ru.mvk.videoGuide.exception.VideoGuideRuntimeException;
 
+import java.sql.ResultSet;
 import java.util.List;
 
 public abstract class SQLiteAbstractDbController implements DbController {
@@ -71,6 +73,18 @@ public abstract class SQLiteAbstractDbController implements DbController {
       @NotNull Query query = hibernateAdapter.prepareSqlQuery(sql, session);
       return query.executeUpdate();
     });
+  }
+
+  @NotNull
+  protected List<?> executeQuery(@NotNull String sql) {
+    @Nullable List<?> result = hibernateAdapter.executeInTransaction((session) -> {
+      @NotNull Query query = hibernateAdapter.prepareSqlQuery(sql, session);
+      return query.list();
+    });
+    if (result == null) {
+      throw new VideoGuideRuntimeException("Query result is null");
+    }
+    return result;
   }
 
   @Nullable

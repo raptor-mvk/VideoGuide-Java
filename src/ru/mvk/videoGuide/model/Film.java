@@ -22,6 +22,10 @@ public final class Film implements Serializable {
   @Column(name = "name", nullable = false, length = 100)
   private String name;
 
+  @NotNull
+  @Column(name = "lowerName", nullable = false, length = 100)
+  private String lowerName;
+
   @Column(name = "length", nullable = false)
   private int length;
 
@@ -42,6 +46,7 @@ public final class Film implements Serializable {
 
   public Film() {
     name = "";
+    lowerName = "";
     filesCount = 1;
   }
 
@@ -76,6 +81,7 @@ public final class Film implements Serializable {
 
   public void setName(@NotNull String name) {
     this.name = name;
+    this.lowerName = name.toLowerCase();
   }
 
   public int getId() {
@@ -100,6 +106,11 @@ public final class Film implements Serializable {
 
   public long getAverageSize() {
     return size / filesCount;
+  }
+
+  @NotNull
+  public String getLowerName() {
+    return lowerName + name;
   }
 
   @Override
