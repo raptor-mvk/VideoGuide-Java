@@ -38,7 +38,7 @@ public abstract class JFXLayout implements Layout {
   }
 
   @NotNull
-  Stage getStage() {
+  final Stage getStage() {
     if (stage == null) {
       throw new VideoGuideRuntimeException("Stage was not set");
     }

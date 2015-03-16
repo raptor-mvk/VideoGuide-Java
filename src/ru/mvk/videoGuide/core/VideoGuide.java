@@ -24,6 +24,7 @@ import ru.mvk.videoGuide.descriptor.field.NaturalFieldInfo;
 import ru.mvk.videoGuide.descriptor.field.TextFieldInfo;
 import ru.mvk.videoGuide.javafx.layout.JFXLayout;
 import ru.mvk.videoGuide.javafx.layout.JFXSimpleLayout;
+import ru.mvk.videoGuide.javafx.layout.JFXViewWindowLayout;
 import ru.mvk.videoGuide.model.Film;
 import ru.mvk.videoGuide.module.db.DbController;
 import ru.mvk.videoGuide.module.db.HibernateAdapter;
@@ -54,7 +55,7 @@ public class VideoGuide extends Application {
   private final DbController videoGuideDbController;
 
   public VideoGuide() {
-    layout = new JFXSimpleLayout();
+    layout = new JFXViewWindowLayout();
     filmViewInfo = prepareFilmViewInfo();
     filmListViewInfo = prepareFilmListViewInfo();
     hibernateAdapter = prepareHibernateAdapter();
