@@ -38,7 +38,8 @@ public abstract class SQLiteAbstractDbController implements DbController {
 
   @Override
   public boolean updateDb() {
-    long appDbVersion = getAppDbVersion();
+    int appDbVersion = getAppDbVersion();
+    int dbVersion = getDbVersion();
     @Nullable Boolean result = hibernateAdapter.executeInTransaction((session) -> {
       @NotNull Query query = hibernateAdapter.prepareSqlQuery("pragma user_version=" +
           appDbVersion + ';', session);
@@ -47,7 +48,6 @@ public abstract class SQLiteAbstractDbController implements DbController {
     if (result == null) {
       result = false;
     }
-    int dbVersion = getDbVersion();
     return result && updateDbSchema(dbVersion);
   }
 

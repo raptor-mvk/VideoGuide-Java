@@ -21,7 +21,8 @@ public class VideoGuideDbController extends SQLiteAbstractDbController {
       for (Object row : rows) {
         @NotNull String id = ((Object[]) row)[0].toString();
         @NotNull String name = ((Object[]) row)[1].toString().toLowerCase();
-        @NotNull String sqlQuery = "update film set lowerName='" + name +
+        @NotNull String escapedName = name.replaceAll("'","''");
+        @NotNull String sqlQuery = "update film set lowerName='" + escapedName +
             "' where rowid=" + id + ';';
         execute(sqlQuery);
       }
