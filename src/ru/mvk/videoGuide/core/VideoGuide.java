@@ -23,6 +23,7 @@ import ru.mvk.videoGuide.descriptor.column.LowerStringColumnInfo;
 import ru.mvk.videoGuide.descriptor.column.StringColumnInfo;
 import ru.mvk.videoGuide.descriptor.field.NaturalFieldInfo;
 import ru.mvk.videoGuide.descriptor.field.TextFieldInfo;
+import ru.mvk.videoGuide.exception.VideoGuideRuntimeException;
 import ru.mvk.videoGuide.javafx.layout.JFXLayout;
 import ru.mvk.videoGuide.javafx.layout.JFXSimpleLayout;
 import ru.mvk.videoGuide.javafx.layout.JFXViewWindowLayout;
@@ -65,7 +66,9 @@ public class VideoGuide extends Application {
     if (!videoGuideDbController.isDbSuitable()) {
       videoGuideDbController.createDb();
     } else {
-      videoGuideDbController.updateDb();
+      if (!videoGuideDbController.updateDb()) {
+        throw new VideoGuideRuntimeException("VideoGuide: Could not update database");
+      }
     }
     filmViewService = prepareFilmViewService();
   }

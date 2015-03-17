@@ -184,7 +184,7 @@ public class DbIntegrationTests {
         @NotNull String previousTestObjectName = list.get(i - 1).getName();
         @NotNull String currentTestObjectName = list.get(i).getName();
         listsAreEqual = listsAreEqual &&
-            previousTestObjectName.compareTo(currentTestObjectName) <= 0;
+            previousTestObjectName.compareTo(currentTestObjectName) >= 0;
       }
       Assert.assertTrue("list() should return all database entries sorted in " +
           "ascending order by id", listsAreEqual);
@@ -264,6 +264,37 @@ public class DbIntegrationTests {
       int dbVersion = dbController.getDbVersion();
       Assert.assertEquals("getDbVersion() should correct database version",
           APP_DB_VERSION, dbVersion);
+    } finally {
+      sqLiteHelper.removeDbFile(sessionFactory, DB_FILENAME);
+    }
+  }
+
+  @Test()
+  public void dbControllerUpdateDb_TooLargeVersion_ShouldNotChangeDbVersion() {
+    try {
+      @NotNull DbController dbController =
+          new SQLiteTestDbController(hibernateAdapter, APP_ID, APP_DB_VERSION);
+      int expectedDbVersion = 5;
+      prepareDbWithServiceInfo(APP_ID, expectedDbVersion);
+      dbController.updateDb();
+      int dbVersion = dbController.getDbVersion();
+      Assert.assertEquals("updateDb() should not change dbVersion, when it is greater, " +
+          "than appDbVersion", expectedDbVersion, dbVersion);
+    } finally {
+      sqLiteHelper.removeDbFile(sessionFactory, DB_FILENAME);
+    }
+  }
+
+  @Test()
+  public void dbControllerUpdateDb_TooLargeVersion_ShouldReturnFalse() {
+    try {
+      @NotNull DbController dbController =
+          new SQLiteTestDbController(hibernateAdapter, APP_ID, APP_DB_VERSION);
+      int expectedDbVersion = 5;
+      prepareDbWithServiceInfo(APP_ID, expectedDbVersion);
+      boolean result = dbController.updateDb();
+      Assert.assertFalse("updateDb() should return false, when dbVersion is greater, " +
+              "than appDbVersion", result);
     } finally {
       sqLiteHelper.removeDbFile(sessionFactory, DB_FILENAME);
     }

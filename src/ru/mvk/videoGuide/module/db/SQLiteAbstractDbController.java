@@ -23,6 +23,7 @@ public abstract class SQLiteAbstractDbController implements DbController {
   @Override
   public final boolean isDbSuitable() {
     @Nullable Object appId = getValue("pragma application_id;");
+    @Nullable Object dbVersion = getValue("pragma user_version");
     return (appId instanceof Integer) && (int) appId == getAppId();
   }
 
@@ -40,11 +41,16 @@ public abstract class SQLiteAbstractDbController implements DbController {
   public boolean updateDb() {
     int appDbVersion = getAppDbVersion();
     int dbVersion = getDbVersion();
-    @Nullable Boolean result = hibernateAdapter.executeInTransaction((session) -> {
-      @NotNull Query query = hibernateAdapter.prepareSqlQuery("pragma user_version=" +
-          appDbVersion + ';', session);
-      return (query.executeUpdate() == 0);
-    });
+    @Nullable Boolean result;
+    if (dbVersion <= appDbVersion) {
+       result = hibernateAdapter.executeInTransaction((session) -> {
+        @NotNull Query query = hibernateAdapter.prepareSqlQuery("pragma user_version=" +
+            appDbVersion + ';', session);
+        return (query.executeUpdate() == 0);
+      });
+    } else {
+      result = false;
+    }
     if (result == null) {
       result = false;
     }
