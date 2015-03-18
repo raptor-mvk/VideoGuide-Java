@@ -25,7 +25,8 @@ import ru.mvk.videoGuide.descriptor.column.StringColumnInfo;
 import ru.mvk.videoGuide.descriptor.field.NaturalFieldInfo;
 import ru.mvk.videoGuide.descriptor.field.TextFieldInfo;
 import ru.mvk.videoGuide.exception.VideoGuideRuntimeException;
-import ru.mvk.videoGuide.javafx.layout.*;
+import ru.mvk.videoGuide.javafx.layout.JFXLayout;
+import ru.mvk.videoGuide.javafx.layout.JFXTabViewWindowLayout;
 import ru.mvk.videoGuide.model.Disc;
 import ru.mvk.videoGuide.model.Film;
 import ru.mvk.videoGuide.module.db.DbController;
@@ -130,16 +131,20 @@ public class VideoGuide extends Application {
   @NotNull
   private ViewInfo<Disc> prepareDiscViewInfo() {
     @NotNull ViewInfo<Disc> viewInfo = new ViewInfoImpl<>(Disc.class);
-    viewInfo.addFieldInfo("disc", new NaturalFieldInfo<>(Byte.class, "Диск", 2));
-    viewInfo.addFieldInfo("size", new NaturalFieldInfo<>(Short.class, "Размер, Гб", 4));
+    viewInfo.addFieldInfo("number", new NaturalFieldInfo<>(Byte.class, "Диск", 2));
+    viewInfo.addFieldInfo("sizeGb", new NaturalFieldInfo<>(Short.class, "Размер, Гб", 4));
     return viewInfo;
   }
 
   @NotNull
   private ListViewInfo<Disc> prepareDiscListViewInfo() {
     @NotNull ListViewInfo<Disc> listViewInfo = new ListViewInfoImpl<>(Disc.class);
-    listViewInfo.addColumnInfo("name", new StringColumnInfo("Диск", 8));
-    listViewInfo.addColumnInfo("size", new FileSizeColumnInfo("Размер, Гб", 10));
+    listViewInfo.addColumnInfo("number", new StringColumnInfo("Диск", 8));
+    listViewInfo.addColumnInfo("size", new FileSizeColumnInfo("Размер", 10));
+    listViewInfo.addColumnInfo("filmsCount", new StringColumnInfo("Фильмов", 10));
+    listViewInfo.addColumnInfo("filmsFilesCount", new StringColumnInfo("Файлов", 10));
+    listViewInfo.addColumnInfo("filmsLength", new DurationColumnInfo("Длительность", 10));
+    listViewInfo.addColumnInfo("filmsSize", new FileSizeColumnInfo("Размер", 10));
     return listViewInfo;
   }
 
@@ -187,6 +192,7 @@ public class VideoGuide extends Application {
     properties.put("hibernate.dialect", "ru.mvk.service.hibernate.SQLiteDialect");
     configuration.setProperties(properties);
     configuration.addAnnotatedClass(Film.class);
+    configuration.addAnnotatedClass(Disc.class);
     return configuration;
   }
 }

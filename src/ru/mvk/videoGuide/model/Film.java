@@ -3,6 +3,7 @@
  */
 package ru.mvk.videoGuide.model;
 
+import org.hibernate.annotations.Formula;
 import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.*;
@@ -38,10 +39,10 @@ public final class Film implements Serializable {
   @Column(name = "filesCount", nullable = false)
   private short filesCount;
 
-  @Transient
+  @Formula("length / filesCount")
   private int averageLength;
 
-  @Transient
+  @Formula("size / filesCount")
   private long averageSize;
 
   public Film() {
@@ -101,11 +102,11 @@ public final class Film implements Serializable {
   }
 
   public int getAverageLength() {
-    return length / filesCount;
+    return averageLength;
   }
 
   public long getAverageSize() {
-    return size / filesCount;
+    return averageSize;
   }
 
   @NotNull

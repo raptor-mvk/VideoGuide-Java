@@ -7,12 +7,12 @@ package ru.mvk.videoGuide.model;
 import org.hibernate.annotations.Formula;
 import org.jetbrains.annotations.NotNull;
 
-import javax.persistence.Column;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
+@Entity
+@Table(name = "disc")
 public final class Disc {
   @Id
   @GeneratedValue(strategy = IDENTITY)
@@ -23,7 +23,22 @@ public final class Disc {
   private byte number;
 
   @Column(name = "size", nullable = false)
-  private short size;
+  private short sizeGb;
+
+  @Formula("size*1073741824")
+  private long size;
+
+  @Formula("(select count(*) from Film where film.disc=number)")
+  private int filmsCount;
+
+  @Formula("(select sum(film.filesCount) from Film where film.disc=number)")
+  private int filmsFilesCount;
+
+  @Formula("(select sum(film.length) from Film where film.disc=number)")
+  private int filmsLength;
+
+  @Formula("(select sum(film.size) from Film where film.disc=number)")
+  private long filmsSize;
 
   public int getId() {
     return id;
@@ -41,12 +56,32 @@ public final class Disc {
     this.number = number;
   }
 
-  public short getSize() {
+  public short getSizeGb() {
+    return sizeGb;
+  }
+
+  public void setSizeGb(short sizeGb) {
+    this.sizeGb = sizeGb;
+  }
+
+  public long getSize() {
     return size;
   }
 
-  public void setSize(short size) {
-    this.size = size;
+  public int getFilmsCount() {
+    return filmsCount;
+  }
+
+  public int getFilmsFilesCount() {
+    return filmsFilesCount;
+  }
+
+  public int getFilmsLength() {
+    return filmsLength;
+  }
+
+  public long getFilmsSize() {
+    return filmsSize;
   }
 
   @Override
