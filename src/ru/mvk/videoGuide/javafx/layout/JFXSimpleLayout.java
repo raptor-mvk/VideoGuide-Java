@@ -9,7 +9,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.ScrollPane;
 import javafx.stage.Stage;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Consumer;
 
@@ -18,7 +17,8 @@ public class JFXSimpleLayout extends JFXLayout {
   private final ScrollPane root = new ScrollPane();
 
   @Override
-  public int registerViewService(@NotNull String serviceKey) {
+  public int registerViewService(@NotNull String serviceKey,
+                                 @NotNull Runnable defaultViewSetter) {
     return 0;
   }
 
@@ -35,7 +35,11 @@ public class JFXSimpleLayout extends JFXLayout {
   @NotNull
   @Override
   public Consumer<Object> getListViewUpdater(int serviceId) {
-    return getViewUpdater(serviceId);
+    return (content) -> {
+      if (content instanceof Node) {
+        root.setContent((Node) content);
+      }
+    };
   }
 
   @Override

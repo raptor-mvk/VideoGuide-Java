@@ -4,9 +4,11 @@
 
 package ru.mvk.videoGuide.javafx.layout;
 
+import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.Tab;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -15,13 +17,13 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Consumer;
 
-public class JFXViewWindowLayout extends JFXSimpleLayout {
+public class JFXTabViewWindowLayout extends JFXTabLayout {
   @NotNull
   private final ScrollPane viewRoot = new ScrollPane();
   @NotNull
   private final Stage viewWindowStage = new Stage(StageStyle.UTILITY);
 
-  public JFXViewWindowLayout(int viewWindowWidth, int viewWindowHeight) {
+  public JFXTabViewWindowLayout(int viewWindowWidth, int viewWindowHeight) {
     @NotNull Scene viewScene = new Scene(viewRoot, viewWindowWidth, viewWindowHeight);
     viewWindowStage.setScene(viewScene);
     viewWindowStage.setAlwaysOnTop(true);
@@ -37,6 +39,23 @@ public class JFXViewWindowLayout extends JFXSimpleLayout {
         viewRoot.setContent((Node) content);
         viewWindowStage.show();
       }
+    };
+  }
+
+  @NotNull
+  @Override
+  public Consumer<Object> getListViewUpdater(int serviceId) {
+    return (content) -> {
+      if (content instanceof Node) {
+        @NotNull ObservableList<Tab> tabList = getTabList();
+        @Nullable Tab tab = tabList.get(serviceId);
+        if (tab != null) {
+          @NotNull ScrollPane scrollPane = new ScrollPane();
+          scrollPane.setContent(((Node)content));
+          tab.setContent(scrollPane);
+        }
+      }
+      viewWindowStage.hide();
     };
   }
 

@@ -18,7 +18,8 @@ public interface Layout {
   @NotNull
   <EntityType> View<EntityType> getView(@NotNull ViewInfo<EntityType> viewInfo);
 
-  int registerViewService(@NotNull String serviceKey);
+  int registerViewService(@NotNull String serviceKey,
+                          @NotNull Runnable defaultViewSetter);
 
   @NotNull
   Consumer<Object> getViewUpdater(int serviceId);

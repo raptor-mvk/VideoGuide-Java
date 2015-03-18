@@ -15,7 +15,7 @@ public class VideoGuideDbController extends SQLiteAbstractDbController {
 
   @Override
   protected boolean updateDbSchema(int fromDbVersion) {
-    if (fromDbVersion == 1) {
+    if (fromDbVersion < 2) {
       execute("alter table film add column lowerName text");
       List<?> rows = executeQuery("select rowid, name from film;");
       for (Object row : rows) {
@@ -27,6 +27,9 @@ public class VideoGuideDbController extends SQLiteAbstractDbController {
         execute(sqlQuery);
       }
     }
+    if (fromDbVersion < 3) {
+      execute("create table disc (number int, size int);");
+    }
     return true;
   }
 
@@ -34,6 +37,7 @@ public class VideoGuideDbController extends SQLiteAbstractDbController {
   protected boolean createDbSchema() {
     execute("create table film (name text, lowerName text, length int, size int, " +
         "disc int, filesCount int);");
+    execute("create table disc (number int, size int);");
     return true;
   }
 
@@ -44,6 +48,6 @@ public class VideoGuideDbController extends SQLiteAbstractDbController {
 
   @Override
   protected int getAppDbVersion() {
-    return 2;
+    return 3;
   }
 }

@@ -12,6 +12,7 @@ import org.hibernate.cfg.Configuration;
 import org.hibernate.service.ServiceRegistry;
 import org.jetbrains.annotations.NotNull;
 import ru.mvk.videoGuide.dao.Dao;
+import ru.mvk.videoGuide.dao.DiscDao;
 import ru.mvk.videoGuide.dao.FilmDao;
 import ru.mvk.videoGuide.descriptor.ListViewInfo;
 import ru.mvk.videoGuide.descriptor.ListViewInfoImpl;
@@ -24,15 +25,14 @@ import ru.mvk.videoGuide.descriptor.column.StringColumnInfo;
 import ru.mvk.videoGuide.descriptor.field.NaturalFieldInfo;
 import ru.mvk.videoGuide.descriptor.field.TextFieldInfo;
 import ru.mvk.videoGuide.exception.VideoGuideRuntimeException;
-import ru.mvk.videoGuide.javafx.layout.JFXLayout;
-import ru.mvk.videoGuide.javafx.layout.JFXSimpleLayout;
-import ru.mvk.videoGuide.javafx.layout.JFXTabLayout;
-import ru.mvk.videoGuide.javafx.layout.JFXViewWindowLayout;
+import ru.mvk.videoGuide.javafx.layout.*;
+import ru.mvk.videoGuide.model.Disc;
 import ru.mvk.videoGuide.model.Film;
 import ru.mvk.videoGuide.module.db.DbController;
 import ru.mvk.videoGuide.module.db.HibernateAdapter;
 import ru.mvk.videoGuide.module.db.HibernateAdapterImpl;
 import ru.mvk.videoGuide.module.db.VideoGuideDbController;
+import ru.mvk.videoGuide.service.DiscViewService;
 import ru.mvk.videoGuide.service.FilmViewService;
 import ru.mvk.videoGuide.service.ViewService;
 import ru.mvk.videoGuide.service.ViewServiceDescriptor;
@@ -53,16 +53,27 @@ public class VideoGuide extends Application {
   @NotNull
   private final Dao<Film, Integer> filmDao;
   @NotNull
+  private final ViewInfo<Disc> discViewInfo;
+  @NotNull
+  private final ListViewInfo<Disc> discListViewInfo;
+  @NotNull
+  private final ViewService<Disc> discViewService;
+  @NotNull
+  private final Dao<Disc, Integer> discDao;
+  @NotNull
   private final HibernateAdapter hibernateAdapter;
   @NotNull
   private final DbController videoGuideDbController;
 
   public VideoGuide() {
-    layout = new JFXTabLayout();
+    layout = new JFXTabViewWindowLayout(800, 400);
     filmViewInfo = prepareFilmViewInfo();
     filmListViewInfo = prepareFilmListViewInfo();
+    discViewInfo = prepareDiscViewInfo();
+    discListViewInfo = prepareDiscListViewInfo();
     hibernateAdapter = prepareHibernateAdapter();
     filmDao = new FilmDao(hibernateAdapter);
+    discDao = new DiscDao(hibernateAdapter);
     videoGuideDbController = new VideoGuideDbController(hibernateAdapter);
     if (!videoGuideDbController.isDbSuitable()) {
       videoGuideDbController.createDb();
@@ -72,6 +83,7 @@ public class VideoGuide extends Application {
       }
     }
     filmViewService = prepareFilmViewService();
+    discViewService = prepareDiscViewService();
   }
 
   public static void main(String[] args) {
@@ -116,6 +128,22 @@ public class VideoGuide extends Application {
   }
 
   @NotNull
+  private ViewInfo<Disc> prepareDiscViewInfo() {
+    @NotNull ViewInfo<Disc> viewInfo = new ViewInfoImpl<>(Disc.class);
+    viewInfo.addFieldInfo("disc", new NaturalFieldInfo<>(Byte.class, "Диск", 2));
+    viewInfo.addFieldInfo("size", new NaturalFieldInfo<>(Short.class, "Размер, Гб", 4));
+    return viewInfo;
+  }
+
+  @NotNull
+  private ListViewInfo<Disc> prepareDiscListViewInfo() {
+    @NotNull ListViewInfo<Disc> listViewInfo = new ListViewInfoImpl<>(Disc.class);
+    listViewInfo.addColumnInfo("name", new StringColumnInfo("Диск", 8));
+    listViewInfo.addColumnInfo("size", new FileSizeColumnInfo("Размер, Гб", 10));
+    return listViewInfo;
+  }
+
+  @NotNull
   private ViewService<Film> prepareFilmViewService() {
     @NotNull ViewServiceDescriptor<Film> viewServiceDescriptor =
         new ViewServiceDescriptor<>(filmDao, filmViewInfo, filmListViewInfo);
@@ -126,6 +154,15 @@ public class VideoGuide extends Application {
   }
 
   @NotNull
+  private ViewService<Disc> prepareDiscViewService() {
+    @NotNull ViewServiceDescriptor<Disc> viewServiceDescriptor =
+        new ViewServiceDescriptor<>(discDao, discViewInfo, discListViewInfo);
+    @NotNull ViewService<Disc> viewService =
+        new DiscViewService(viewServiceDescriptor, layout);
+    viewService.setDefaultOrder("number", true);
+    return viewService;
+  }
+
   HibernateAdapter prepareHibernateAdapter() {
     @NotNull SessionFactory sessionFactory = prepareSessionFactory();
     return new HibernateAdapterImpl(sessionFactory);

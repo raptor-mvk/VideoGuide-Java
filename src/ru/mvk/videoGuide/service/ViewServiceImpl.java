@@ -45,7 +45,7 @@ public class ViewServiceImpl<EntityType> implements ViewService<EntityType> {
     @NotNull ListViewInfo<EntityType> listViewInfo =
         viewServiceDescriptor.getListViewInfo();
     this.listView = layout.getListView(listViewInfo);
-    int serviceId = layout.registerViewService(serviceKey);
+    int serviceId = layout.registerViewService(serviceKey, this::showListView);
     viewUpdater = layout.getViewUpdater(serviceId);
     listViewUpdater = layout.getListViewUpdater(serviceId);
     prepareView();

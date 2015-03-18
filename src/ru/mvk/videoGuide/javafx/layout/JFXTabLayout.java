@@ -4,6 +4,7 @@
 
 package ru.mvk.videoGuide.javafx.layout;
 
+import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -27,9 +28,15 @@ public class JFXTabLayout extends JFXLayout {
   }
 
   @Override
-  public int registerViewService(@NotNull String serviceKey) {
+  public int registerViewService(@NotNull String serviceKey,
+                                 @NotNull Runnable defaultViewSetter) {
     @NotNull ObservableList<Tab> tabList = getTabList();
     @NotNull Tab tab = new Tab(serviceKey);
+    tab.setOnSelectionChanged((event) -> {
+      if (tab.isSelected()) {
+        Platform.runLater(defaultViewSetter::run);
+      }
+    });
     tabList.add(tab);
     return tabList.size() - 1;
   }
@@ -43,7 +50,7 @@ public class JFXTabLayout extends JFXLayout {
         @Nullable Tab tab = tabList.get(serviceId);
         if (tab != null) {
           @NotNull ScrollPane scrollPane = new ScrollPane();
-          scrollPane.setContent(((Node)content));
+          scrollPane.setContent(((Node) content));
           tab.setContent(scrollPane);
         }
       }
@@ -53,7 +60,17 @@ public class JFXTabLayout extends JFXLayout {
   @NotNull
   @Override
   public Consumer<Object> getListViewUpdater(int serviceId) {
-    return getViewUpdater(serviceId);
+    return (content) -> {
+      if (content instanceof Node) {
+        @NotNull ObservableList<Tab> tabList = getTabList();
+        @Nullable Tab tab = tabList.get(serviceId);
+        if (tab != null) {
+          @NotNull ScrollPane scrollPane = new ScrollPane();
+          scrollPane.setContent(((Node) content));
+          tab.setContent(scrollPane);
+        }
+      }
+    };
   }
 
   @Override
@@ -65,7 +82,7 @@ public class JFXTabLayout extends JFXLayout {
   }
 
   @NotNull
-  private ObservableList<Tab> getTabList() {
+  protected ObservableList<Tab> getTabList() {
     @Nullable ObservableList<Tab> tabList = root.getTabs();
     if (tabList == null) {
       throw new VideoGuideRuntimeException("JFXTabLayout: tab list is null");
