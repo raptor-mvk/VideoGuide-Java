@@ -23,8 +23,8 @@ public class JFXViewWindowLayout extends JFXLayout {
   @NotNull
   private final Stage viewWindowStage = new Stage(StageStyle.UTILITY);
 
-  public JFXViewWindowLayout() {
-    @NotNull Scene viewScene = new Scene(viewRoot, 1000, 400);
+  public JFXViewWindowLayout(int viewWindowWidth, int viewWindowHeight) {
+    @NotNull Scene viewScene = new Scene(viewRoot, viewWindowWidth, viewWindowHeight);
     viewWindowStage.setScene(viewScene);
     viewWindowStage.setAlwaysOnTop(true);
     viewWindowStage.setResizable(false);
@@ -59,9 +59,9 @@ public class JFXViewWindowLayout extends JFXLayout {
   }
 
   @Override
-  public void show() {
+  public void show(int width, int height) {
     @NotNull Stage stage = getStage();
-    @NotNull Scene listViewScene = new Scene(listViewRoot, 1000, 440);
+    @NotNull Scene listViewScene = new Scene(listViewRoot, width, height);
     stage.setScene(listViewScene);
     stage.setResizable(false);
     stage.show();

@@ -26,5 +26,5 @@ public interface Layout {
   @NotNull
   Consumer<Object> getListViewUpdater(int serviceId);
 
-  void show();
+  void show(int width, int height);
 }

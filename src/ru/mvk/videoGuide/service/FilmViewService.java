@@ -11,6 +11,6 @@ import ru.mvk.videoGuide.view.Layout;
 public class FilmViewService extends ViewServiceImpl<Film> {
   public FilmViewService(@NotNull ViewServiceDescriptor<Film> viewServiceDescriptor,
                          @NotNull Layout layout) {
-    super(viewServiceDescriptor, layout, "film");
+    super(viewServiceDescriptor, layout, "Фильмы");
   }
 }

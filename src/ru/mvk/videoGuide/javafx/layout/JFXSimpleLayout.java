@@ -35,17 +35,13 @@ public class JFXSimpleLayout extends JFXLayout {
   @NotNull
   @Override
   public Consumer<Object> getListViewUpdater(int serviceId) {
-    return (content) -> {
-      if (content instanceof Node) {
-        root.setContent((Node) content);
-      }
-    };
+    return getViewUpdater(serviceId);
   }
 
   @Override
-  public void show() {
+  public void show(int width, int height) {
     @NotNull Stage stage = getStage();
-    stage.setScene(new Scene(root, 1000, 440));
+    stage.setScene(new Scene(root, width, height));
     stage.setResizable(false);
     stage.show();
   }

@@ -93,7 +93,6 @@ public class JFXView<EntityType> implements View<EntityType> {
   public GridPane getView(@NotNull EntityType entity, boolean isNewEntity) {
     newEntity = isNewEntity;
     prepareFieldValues(entity);
-    focusOnFirstField();
     return gridPane;
   }
 
@@ -141,6 +140,9 @@ public class JFXView<EntityType> implements View<EntityType> {
         }
       }
     }
+    int buttonsRow = viewInfo.getFieldsCount();
+    gridPane.add(saveButton, 0, buttonsRow);
+    gridPane.add(cancelButton, 1, buttonsRow);
   }
 
   private void prepareLabel(int index, @NotNull String fieldKey) {
@@ -169,9 +171,6 @@ public class JFXView<EntityType> implements View<EntityType> {
     result.setHgap(5.0);
     result.setVgap(5.0);
     result.setPadding(new Insets(5.0));
-    int buttonsRow = viewInfo.getFieldsCount();
-    result.add(saveButton, 0, buttonsRow);
-    result.add(cancelButton, 1, buttonsRow);
     return result;
   }
 
@@ -343,22 +342,6 @@ public class JFXView<EntityType> implements View<EntityType> {
           throw new VideoGuideRuntimeException("JFXView: Could not access field");
         }
       });
-    }
-  }
-
-  private void focusOnFirstField() {
-    @NotNull Iterator<Entry<String, NamedFieldInfo>> iterator = viewInfo.getIterator();
-    if (iterator.hasNext()) {
-      @Nullable Entry<String, NamedFieldInfo> entry = iterator.next();
-      if (entry != null) {
-        @Nullable String fieldKey = entry.getKey();
-        if (fieldKey != null) {
-          @Nullable Node firstField = fields.get(fieldKey);
-          if (firstField != null) {
-            Platform.runLater(firstField::requestFocus);
-          }
-        }
-      }
     }
   }
 }

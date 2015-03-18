@@ -26,6 +26,7 @@ import ru.mvk.videoGuide.descriptor.field.TextFieldInfo;
 import ru.mvk.videoGuide.exception.VideoGuideRuntimeException;
 import ru.mvk.videoGuide.javafx.layout.JFXLayout;
 import ru.mvk.videoGuide.javafx.layout.JFXSimpleLayout;
+import ru.mvk.videoGuide.javafx.layout.JFXTabLayout;
 import ru.mvk.videoGuide.javafx.layout.JFXViewWindowLayout;
 import ru.mvk.videoGuide.model.Film;
 import ru.mvk.videoGuide.module.db.DbController;
@@ -57,7 +58,7 @@ public class VideoGuide extends Application {
   private final DbController videoGuideDbController;
 
   public VideoGuide() {
-    layout = new JFXViewWindowLayout();
+    layout = new JFXTabLayout();
     filmViewInfo = prepareFilmViewInfo();
     filmListViewInfo = prepareFilmListViewInfo();
     hibernateAdapter = prepareHibernateAdapter();
@@ -81,7 +82,7 @@ public class VideoGuide extends Application {
   public void start(@NotNull Stage primaryStage) throws Exception {
     filmViewService.showListView();
     layout.setStage(primaryStage);
-    layout.show();
+    layout.show(1000, 460);
   }
 
   @Override
