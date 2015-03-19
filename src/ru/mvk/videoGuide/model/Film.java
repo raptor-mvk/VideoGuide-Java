@@ -39,10 +39,10 @@ public final class Film implements Serializable {
   @Column(name = "filesCount", nullable = false)
   private short filesCount;
 
-  @Formula("length / filesCount")
+  @Formula("case when filesCount > 0 then length / filesCount else 0 end")
   private int averageLength;
 
-  @Formula("size / filesCount")
+  @Formula("case when filesCount > 0 then size / filesCount else 0 end")
   private long averageSize;
 
   public Film() {

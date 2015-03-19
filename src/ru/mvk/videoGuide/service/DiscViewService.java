@@ -5,8 +5,10 @@
 package ru.mvk.videoGuide.service;
 
 import org.jetbrains.annotations.NotNull;
+import ru.mvk.iluvatar.service.ViewServiceDescriptor;
+import ru.mvk.iluvatar.service.ViewServiceImpl;
+import ru.mvk.iluvatar.view.Layout;
 import ru.mvk.videoGuide.model.Disc;
-import ru.mvk.videoGuide.view.Layout;
 
 public class DiscViewService extends ViewServiceImpl<Disc> {
   public DiscViewService(@NotNull ViewServiceDescriptor<Disc> viewServiceDescriptor,

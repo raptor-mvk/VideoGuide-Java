@@ -5,7 +5,6 @@
 package ru.mvk.videoGuide.model;
 
 import org.hibernate.annotations.Formula;
-import org.jetbrains.annotations.NotNull;
 
 import javax.persistence.*;
 
@@ -31,14 +30,20 @@ public final class Disc {
   @Formula("(select count(*) from Film where film.disc=number)")
   private int filmsCount;
 
-  @Formula("(select sum(film.filesCount) from Film where film.disc=number)")
+  @Formula("(select case when sum(film.filesCount) is null then 0 else " +
+      "sum(film.filesCount) end from Film where film.disc=number)")
   private int filmsFilesCount;
 
-  @Formula("(select sum(film.length) from Film where film.disc=number)")
+  @Formula("(select case when sum(film.length) is null then 0 else sum(film.length) " +
+      "end from Film where film.disc=number)")
   private int filmsLength;
 
-  @Formula("(select sum(film.size) from Film where film.disc=number)")
+  @Formula("(select case when sum(film.size) is null then 0 else sum(film.size) end " +
+      "from Film where film.disc=number)")
   private long filmsSize;
+
+  @Transient
+  private long freeSize;
 
   public int getId() {
     return id;
@@ -62,6 +67,10 @@ public final class Disc {
 
   public void setSizeGb(short sizeGb) {
     this.sizeGb = sizeGb;
+  }
+
+  public long getFreeSize() {
+    return size - filmsSize;
   }
 
   public long getSize() {

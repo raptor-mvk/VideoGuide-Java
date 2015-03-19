@@ -11,32 +11,32 @@ import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.service.ServiceRegistry;
 import org.jetbrains.annotations.NotNull;
-import ru.mvk.videoGuide.dao.Dao;
+import ru.mvk.iluvatar.dao.Dao;
+import ru.mvk.iluvatar.descriptor.ListViewInfo;
+import ru.mvk.iluvatar.descriptor.ListViewInfoImpl;
+import ru.mvk.iluvatar.descriptor.ViewInfo;
+import ru.mvk.iluvatar.descriptor.ViewInfoImpl;
+import ru.mvk.iluvatar.descriptor.column.DurationColumnInfo;
+import ru.mvk.iluvatar.descriptor.column.FileSizeColumnInfo;
+import ru.mvk.iluvatar.descriptor.column.LowerStringColumnInfo;
+import ru.mvk.iluvatar.descriptor.column.StringColumnInfo;
+import ru.mvk.iluvatar.descriptor.field.NaturalFieldInfo;
+import ru.mvk.iluvatar.descriptor.field.TextFieldInfo;
+import ru.mvk.iluvatar.exception.IluvatarRuntimeException;
+import ru.mvk.iluvatar.javafx.layout.JFXLayout;
+import ru.mvk.iluvatar.javafx.layout.JFXTabViewWindowLayout;
+import ru.mvk.iluvatar.module.db.DbController;
+import ru.mvk.iluvatar.module.db.HibernateAdapter;
+import ru.mvk.iluvatar.module.db.HibernateAdapterImpl;
+import ru.mvk.iluvatar.service.ViewService;
+import ru.mvk.iluvatar.service.ViewServiceDescriptor;
 import ru.mvk.videoGuide.dao.DiscDao;
 import ru.mvk.videoGuide.dao.FilmDao;
-import ru.mvk.videoGuide.descriptor.ListViewInfo;
-import ru.mvk.videoGuide.descriptor.ListViewInfoImpl;
-import ru.mvk.videoGuide.descriptor.ViewInfo;
-import ru.mvk.videoGuide.descriptor.ViewInfoImpl;
-import ru.mvk.videoGuide.descriptor.column.DurationColumnInfo;
-import ru.mvk.videoGuide.descriptor.column.FileSizeColumnInfo;
-import ru.mvk.videoGuide.descriptor.column.LowerStringColumnInfo;
-import ru.mvk.videoGuide.descriptor.column.StringColumnInfo;
-import ru.mvk.videoGuide.descriptor.field.NaturalFieldInfo;
-import ru.mvk.videoGuide.descriptor.field.TextFieldInfo;
-import ru.mvk.videoGuide.exception.VideoGuideRuntimeException;
-import ru.mvk.videoGuide.javafx.layout.JFXLayout;
-import ru.mvk.videoGuide.javafx.layout.JFXTabViewWindowLayout;
 import ru.mvk.videoGuide.model.Disc;
 import ru.mvk.videoGuide.model.Film;
-import ru.mvk.videoGuide.module.db.DbController;
-import ru.mvk.videoGuide.module.db.HibernateAdapter;
-import ru.mvk.videoGuide.module.db.HibernateAdapterImpl;
 import ru.mvk.videoGuide.module.db.VideoGuideDbController;
 import ru.mvk.videoGuide.service.DiscViewService;
 import ru.mvk.videoGuide.service.FilmViewService;
-import ru.mvk.videoGuide.service.ViewService;
-import ru.mvk.videoGuide.service.ViewServiceDescriptor;
 
 import java.util.Properties;
 
@@ -80,7 +80,7 @@ public class VideoGuide extends Application {
       videoGuideDbController.createDb();
     } else {
       if (!videoGuideDbController.updateDb()) {
-        throw new VideoGuideRuntimeException("VideoGuide: Could not update database");
+        throw new IluvatarRuntimeException("VideoGuide: Could not update database");
       }
     }
     filmViewService = prepareFilmViewService();
@@ -140,11 +140,12 @@ public class VideoGuide extends Application {
   private ListViewInfo<Disc> prepareDiscListViewInfo() {
     @NotNull ListViewInfo<Disc> listViewInfo = new ListViewInfoImpl<>(Disc.class);
     listViewInfo.addColumnInfo("number", new StringColumnInfo("Диск", 8));
-    listViewInfo.addColumnInfo("size", new FileSizeColumnInfo("Размер", 10));
-    listViewInfo.addColumnInfo("filmsCount", new StringColumnInfo("Фильмов", 10));
-    listViewInfo.addColumnInfo("filmsFilesCount", new StringColumnInfo("Файлов", 10));
-    listViewInfo.addColumnInfo("filmsLength", new DurationColumnInfo("Длительность", 10));
+    listViewInfo.addColumnInfo("size", new FileSizeColumnInfo("Всего", 10));
+    listViewInfo.addColumnInfo("filmsCount", new StringColumnInfo("Фильмов", 8));
+    listViewInfo.addColumnInfo("filmsFilesCount", new StringColumnInfo("Файлов", 8));
+    listViewInfo.addColumnInfo("filmsLength", new DurationColumnInfo("Длит.", 10));
     listViewInfo.addColumnInfo("filmsSize", new FileSizeColumnInfo("Размер", 10));
+    listViewInfo.addColumnInfo("freeSize", new FileSizeColumnInfo("Свободно", 10));
     return listViewInfo;
   }
 
