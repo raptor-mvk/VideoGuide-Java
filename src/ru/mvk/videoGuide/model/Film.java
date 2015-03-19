@@ -82,7 +82,7 @@ public final class Film implements Serializable {
 
   public void setName(@NotNull String name) {
     this.name = name;
-    this.lowerName = name.toLowerCase();
+    this.lowerName = name.toLowerCase().replace('ё','е');
   }
 
   public int getId() {
