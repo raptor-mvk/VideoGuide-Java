@@ -55,7 +55,7 @@ public class VideoGuide extends Application {
   private final DbController videoGuideDbController;
 
   public VideoGuide() {
-    layout = new JFXTabViewWindowLayout(800, 400);
+    layout = new JFXTabViewWindowLayout(820, 400);
     hibernateAdapter = prepareHibernateAdapter();
     videoGuideDbController = new VideoGuideDbController(hibernateAdapter);
     if (!videoGuideDbController.isDbSuitable()) {
@@ -77,7 +77,7 @@ public class VideoGuide extends Application {
   public void start(@NotNull Stage primaryStage) throws Exception {
     filmViewService.showListView();
     layout.setStage(primaryStage);
-    layout.show(1000, 460);
+    layout.show(1165, 460);
   }
 
   @Override

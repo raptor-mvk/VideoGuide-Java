@@ -20,11 +20,11 @@ public final class Film implements Serializable {
   private int id;
 
   @NotNull
-  @Column(name = "name", nullable = false, length = 100)
+  @Column(name = "name", nullable = false, length = 80)
   private String name;
 
   @NotNull
-  @Column(name = "lowerName", nullable = false, length = 100)
+  @Column(name = "lowerName", nullable = false, length = 80)
   private String lowerName;
 
   @Column(name = "length", nullable = false)

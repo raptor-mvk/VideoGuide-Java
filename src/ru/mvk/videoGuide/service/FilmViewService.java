@@ -33,7 +33,7 @@ public class FilmViewService extends ViewServiceImpl<Film> {
   @NotNull
   private static ViewInfo<Film> prepareFilmViewInfo() {
     @NotNull ViewInfo<Film> viewInfo = new ViewInfoImpl<>(Film.class);
-    viewInfo.addFieldInfo("name", new TextFieldInfo("Название", 60));
+    viewInfo.addFieldInfo("name", new TextFieldInfo("Название", 80));
     viewInfo.addFieldInfo("length",
         new NaturalFieldInfo<>(Integer.class, "Длительность", 6));
     viewInfo.addFieldInfo("size", new NaturalFieldInfo<>(Long.class, "Размер", 12));
@@ -45,7 +45,7 @@ public class FilmViewService extends ViewServiceImpl<Film> {
   @NotNull
   private static ListViewInfo<Film> prepareFilmListViewInfo() {
     @NotNull ListViewInfo<Film> listViewInfo = new ListViewInfoImpl<>(Film.class);
-    listViewInfo.addColumnInfo("lowerName", new LowerStringColumnInfo("Название", 60));
+    listViewInfo.addColumnInfo("lowerName", new LowerStringColumnInfo("Название", 80));
     listViewInfo.addColumnInfo("length", new DurationColumnInfo("Длит.", 10));
     listViewInfo.addColumnInfo("size", new FileSizeColumnInfo("Размер", 10));
     listViewInfo.addColumnInfo("disc", new StringColumnInfo("Диск", 8));
