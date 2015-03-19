@@ -46,21 +46,9 @@ public class VideoGuide extends Application {
   @NotNull
   private final JFXLayout layout;
   @NotNull
-  private final ViewInfo<Film> filmViewInfo;
-  @NotNull
-  private final ListViewInfo<Film> filmListViewInfo;
-  @NotNull
   private final ViewService<Film> filmViewService;
   @NotNull
-  private final Dao<Film, Integer> filmDao;
-  @NotNull
-  private final ViewInfo<Disc> discViewInfo;
-  @NotNull
-  private final ListViewInfo<Disc> discListViewInfo;
-  @NotNull
   private final ViewService<Disc> discViewService;
-  @NotNull
-  private final Dao<Disc, Integer> discDao;
   @NotNull
   private final HibernateAdapter hibernateAdapter;
   @NotNull
@@ -68,13 +56,7 @@ public class VideoGuide extends Application {
 
   public VideoGuide() {
     layout = new JFXTabViewWindowLayout(800, 400);
-    filmViewInfo = prepareFilmViewInfo();
-    filmListViewInfo = prepareFilmListViewInfo();
-    discViewInfo = prepareDiscViewInfo();
-    discListViewInfo = prepareDiscListViewInfo();
     hibernateAdapter = prepareHibernateAdapter();
-    filmDao = new FilmDao(hibernateAdapter);
-    discDao = new DiscDao(hibernateAdapter);
     videoGuideDbController = new VideoGuideDbController(hibernateAdapter);
     if (!videoGuideDbController.isDbSuitable()) {
       videoGuideDbController.createDb();
@@ -83,8 +65,8 @@ public class VideoGuide extends Application {
         throw new IluvatarRuntimeException("VideoGuide: Could not update database");
       }
     }
-    filmViewService = prepareFilmViewService();
-    discViewService = prepareDiscViewService();
+    filmViewService = new FilmViewService(hibernateAdapter, layout);
+    discViewService = new DiscViewService(hibernateAdapter, layout);
   }
 
   public static void main(String[] args) {
@@ -103,73 +85,7 @@ public class VideoGuide extends Application {
     System.exit(0);
   }
 
-  @NotNull
-  private ViewInfo<Film> prepareFilmViewInfo() {
-    @NotNull ViewInfo<Film> viewInfo = new ViewInfoImpl<>(Film.class);
-    viewInfo.addFieldInfo("name", new TextFieldInfo("Название", 60));
-    viewInfo.addFieldInfo("length",
-        new NaturalFieldInfo<>(Integer.class, "Длительность", 6));
-    viewInfo.addFieldInfo("size", new NaturalFieldInfo<>(Long.class, "Размер", 12));
-    viewInfo.addFieldInfo("disc", new NaturalFieldInfo<>(Byte.class, "Диск", 2));
-    viewInfo.addFieldInfo("filesCount", new NaturalFieldInfo<>(Short.class, "Файлов", 3));
-    return viewInfo;
-  }
-
-  @NotNull
-  private ListViewInfo<Film> prepareFilmListViewInfo() {
-    @NotNull ListViewInfo<Film> listViewInfo = new ListViewInfoImpl<>(Film.class);
-    listViewInfo.addColumnInfo("lowerName", new LowerStringColumnInfo("Название", 60));
-    listViewInfo.addColumnInfo("length", new DurationColumnInfo("Длит.", 10));
-    listViewInfo.addColumnInfo("size", new FileSizeColumnInfo("Размер", 10));
-    listViewInfo.addColumnInfo("disc", new StringColumnInfo("Диск", 8));
-    listViewInfo.addColumnInfo("filesCount", new StringColumnInfo("Файлов", 8));
-    listViewInfo.addColumnInfo("averageLength", new DurationColumnInfo("Ср. длит.", 10));
-    listViewInfo.addColumnInfo("averageSize", new FileSizeColumnInfo("Ср. размер", 12));
-    return listViewInfo;
-  }
-
-  @NotNull
-  private ViewInfo<Disc> prepareDiscViewInfo() {
-    @NotNull ViewInfo<Disc> viewInfo = new ViewInfoImpl<>(Disc.class);
-    viewInfo.addFieldInfo("number", new NaturalFieldInfo<>(Byte.class, "Диск", 2));
-    viewInfo.addFieldInfo("sizeGb", new NaturalFieldInfo<>(Short.class, "Размер, Гб", 4));
-    return viewInfo;
-  }
-
-  @NotNull
-  private ListViewInfo<Disc> prepareDiscListViewInfo() {
-    @NotNull ListViewInfo<Disc> listViewInfo = new ListViewInfoImpl<>(Disc.class);
-    listViewInfo.addColumnInfo("number", new StringColumnInfo("Диск", 8));
-    listViewInfo.addColumnInfo("size", new FileSizeColumnInfo("Всего", 10));
-    listViewInfo.addColumnInfo("filmsCount", new StringColumnInfo("Фильмов", 8));
-    listViewInfo.addColumnInfo("filmsFilesCount", new StringColumnInfo("Файлов", 8));
-    listViewInfo.addColumnInfo("filmsLength", new DurationColumnInfo("Длит.", 10));
-    listViewInfo.addColumnInfo("filmsSize", new FileSizeColumnInfo("Размер", 10));
-    listViewInfo.addColumnInfo("freeSize", new FileSizeColumnInfo("Свободно", 10));
-    return listViewInfo;
-  }
-
-  @NotNull
-  private ViewService<Film> prepareFilmViewService() {
-    @NotNull ViewServiceDescriptor<Film> viewServiceDescriptor =
-        new ViewServiceDescriptor<>(filmDao, filmViewInfo, filmListViewInfo);
-    @NotNull ViewService<Film> viewService =
-        new FilmViewService(viewServiceDescriptor, layout);
-    viewService.setDefaultOrder("lowerName", true);
-    return viewService;
-  }
-
-  @NotNull
-  private ViewService<Disc> prepareDiscViewService() {
-    @NotNull ViewServiceDescriptor<Disc> viewServiceDescriptor =
-        new ViewServiceDescriptor<>(discDao, discViewInfo, discListViewInfo);
-    @NotNull ViewService<Disc> viewService =
-        new DiscViewService(viewServiceDescriptor, layout);
-    viewService.setDefaultOrder("number", true);
-    return viewService;
-  }
-
-  HibernateAdapter prepareHibernateAdapter() {
+  private HibernateAdapter prepareHibernateAdapter() {
     @NotNull SessionFactory sessionFactory = prepareSessionFactory();
     return new HibernateAdapterImpl(sessionFactory);
   }
