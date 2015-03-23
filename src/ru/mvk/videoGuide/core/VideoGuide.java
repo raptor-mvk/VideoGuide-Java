@@ -11,17 +11,6 @@ import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.service.ServiceRegistry;
 import org.jetbrains.annotations.NotNull;
-import ru.mvk.iluvatar.dao.Dao;
-import ru.mvk.iluvatar.descriptor.ListViewInfo;
-import ru.mvk.iluvatar.descriptor.ListViewInfoImpl;
-import ru.mvk.iluvatar.descriptor.ViewInfo;
-import ru.mvk.iluvatar.descriptor.ViewInfoImpl;
-import ru.mvk.iluvatar.descriptor.column.DurationColumnInfo;
-import ru.mvk.iluvatar.descriptor.column.FileSizeColumnInfo;
-import ru.mvk.iluvatar.descriptor.column.LowerStringColumnInfo;
-import ru.mvk.iluvatar.descriptor.column.StringColumnInfo;
-import ru.mvk.iluvatar.descriptor.field.NaturalFieldInfo;
-import ru.mvk.iluvatar.descriptor.field.TextFieldInfo;
 import ru.mvk.iluvatar.exception.IluvatarRuntimeException;
 import ru.mvk.iluvatar.javafx.layout.JFXLayout;
 import ru.mvk.iluvatar.javafx.layout.JFXTabViewWindowLayout;
@@ -29,15 +18,14 @@ import ru.mvk.iluvatar.module.db.DbController;
 import ru.mvk.iluvatar.module.db.HibernateAdapter;
 import ru.mvk.iluvatar.module.db.HibernateAdapterImpl;
 import ru.mvk.iluvatar.service.ViewService;
-import ru.mvk.iluvatar.service.ViewServiceDescriptor;
-import ru.mvk.videoGuide.dao.DiscDao;
-import ru.mvk.videoGuide.dao.FilmDao;
+import ru.mvk.iluvatar.properties.BundleStringSupplier;
 import ru.mvk.videoGuide.model.Disc;
 import ru.mvk.videoGuide.model.Film;
 import ru.mvk.videoGuide.module.db.VideoGuideDbController;
 import ru.mvk.videoGuide.service.DiscViewService;
 import ru.mvk.videoGuide.service.FilmViewService;
 
+import java.util.Locale;
 import java.util.Properties;
 
 public class VideoGuide extends Application {
@@ -53,9 +41,15 @@ public class VideoGuide extends Application {
   private final HibernateAdapter hibernateAdapter;
   @NotNull
   private final DbController videoGuideDbController;
+  @NotNull
+  private final BundleStringSupplier stringSupplier =
+      new BundleStringSupplier("VideoGuide");
 
   public VideoGuide() {
     layout = new JFXTabViewWindowLayout(820, 400);
+    @NotNull Locale ruLocale = new Locale("RU");
+    stringSupplier.registerLocale(ruLocale);
+    layout.setStringSupplier(stringSupplier);
     hibernateAdapter = prepareHibernateAdapter();
     videoGuideDbController = new VideoGuideDbController(hibernateAdapter);
     if (!videoGuideDbController.isDbSuitable()) {
