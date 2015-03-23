@@ -36,7 +36,7 @@ public class FilmViewService extends ViewServiceImpl<Film> {
     viewInfo.addFieldInfo("name", new TextFieldInfo("Название", 80));
     viewInfo.addFieldInfo("length",
         new NaturalFieldInfo<>(Integer.class, "Длительность", 6));
-    viewInfo.addFieldInfo("size", new NaturalFieldInfo<>(Long.class, "Размер", 12));
+    viewInfo.addFieldInfo("size", new NaturalFieldInfo<>(Long.class, "Размер", 13));
     viewInfo.addFieldInfo("disc", new NaturalFieldInfo<>(Byte.class, "Диск", 2));
     viewInfo.addFieldInfo("filesCount", new NaturalFieldInfo<>(Short.class, "Файлов", 3));
     return viewInfo;
