@@ -58,6 +58,10 @@ public final class Disc {
     this.number = number;
   }
 
+  public void setSize(long size) {
+    this.size = size;
+  }
+
   public long getFreeSize() {
     return size - filmsSize;
   }
