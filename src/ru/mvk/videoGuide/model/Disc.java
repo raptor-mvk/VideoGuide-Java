@@ -22,9 +22,6 @@ public final class Disc {
   private byte number;
 
   @Column(name = "size", nullable = false)
-  private short sizeGb;
-
-  @Formula("size*1073741824")
   private long size;
 
   @Formula("(select count(*) from Film where film.disc=number)")
@@ -59,14 +56,6 @@ public final class Disc {
 
   public void setNumber(byte number) {
     this.number = number;
-  }
-
-  public short getSizeGb() {
-    return sizeGb;
-  }
-
-  public void setSizeGb(short sizeGb) {
-    this.sizeGb = sizeGb;
   }
 
   public long getFreeSize() {

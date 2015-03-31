@@ -26,6 +26,9 @@ public class VideoGuideDbController extends SQLiteAbstractDbController {
     if (fromDbVersion < 4) {
       updateFromVersion3();
     }
+    if (fromDbVersion < 5) {
+      execute("update disc set size=size*1073741824");
+    }
     return true;
   }
 
@@ -44,7 +47,7 @@ public class VideoGuideDbController extends SQLiteAbstractDbController {
 
   @Override
   protected int getAppDbVersion() {
-    return 4;
+    return 5;
   }
 
   private void updateFromVersion1() {

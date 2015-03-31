@@ -33,7 +33,7 @@ public class DiscViewService extends ViewServiceImpl<Disc> {
   private static ViewInfo<Disc> prepareDiscViewInfo() {
     @NotNull ViewInfo<Disc> viewInfo = new ViewInfoImpl<>(Disc.class);
     viewInfo.addFieldInfo("number", new NaturalFieldInfo<>(Byte.class, "Диск", 2));
-    viewInfo.addFieldInfo("sizeGb", new NaturalFieldInfo<>(Short.class, "Размер, Гб", 4));
+    viewInfo.addFieldInfo("size", new NaturalFieldInfo<>(Long.class, "Размер", 13));
     return viewInfo;
   }
 
