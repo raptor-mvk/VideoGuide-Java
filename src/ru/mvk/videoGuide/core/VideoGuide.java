@@ -71,7 +71,7 @@ public class VideoGuide extends Application {
   public void start(@NotNull Stage primaryStage) throws Exception {
     filmViewService.showListView();
     layout.setStage(primaryStage);
-    layout.show(1165, 460);
+    layout.show(960, 460);
   }
 
   @Override
