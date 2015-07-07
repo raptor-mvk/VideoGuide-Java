@@ -17,17 +17,15 @@ public class VideoGuideDbController extends SQLiteAbstractDbController {
 
   @Override
   protected boolean updateDbSchema(int fromDbVersion) {
-    if (fromDbVersion < 2) {
-      updateFromVersion1();
-    }
-    if (fromDbVersion < 3) {
-      execute("create table disc (number int, size int);");
-    }
     if (fromDbVersion < 4) {
-      updateFromVersion3();
+      updateFromVersionUnder4(fromDbVersion);
     }
     if (fromDbVersion < 5) {
       execute("update disc set size=size*1073741824");
+    }
+    if (fromDbVersion < 6) {
+      execute("create table totals (name text)");
+      execute("insert into totals (name) values ('Всего')");
     }
     return true;
   }
@@ -37,6 +35,8 @@ public class VideoGuideDbController extends SQLiteAbstractDbController {
     execute("create table film (name text, lowerName text, length int, size int, " +
         "disc int, filesCount int);");
     execute("create table disc (number int, size int);");
+    execute("create totals disc (name text);");
+    execute("insert into totals (name) values ('Всего')");
     return true;
   }
 
@@ -47,7 +47,19 @@ public class VideoGuideDbController extends SQLiteAbstractDbController {
 
   @Override
   protected int getAppDbVersion() {
-    return 5;
+    return 6;
+  }
+
+  private void updateFromVersionUnder4(int fromDbVersion) {
+    if (fromDbVersion < 2) {
+      updateFromVersion1();
+    }
+    if (fromDbVersion < 3) {
+      execute("create table disc (number int, size int);");
+    }
+    if (fromDbVersion < 4) {
+      updateFromVersion3();
+    }
   }
 
   private void updateFromVersion1() {

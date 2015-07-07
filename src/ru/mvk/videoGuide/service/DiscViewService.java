@@ -5,6 +5,7 @@
 package ru.mvk.videoGuide.service;
 
 import org.jetbrains.annotations.NotNull;
+import ru.mvk.iluvatar.dao.Dao;
 import ru.mvk.iluvatar.descriptor.ListViewInfo;
 import ru.mvk.iluvatar.descriptor.ListViewInfoImpl;
 import ru.mvk.iluvatar.descriptor.ViewInfo;
@@ -19,15 +20,26 @@ import ru.mvk.iluvatar.service.ViewServiceDescriptor;
 import ru.mvk.iluvatar.service.ViewServiceImpl;
 import ru.mvk.iluvatar.view.Layout;
 import ru.mvk.videoGuide.dao.DiscDao;
+import ru.mvk.videoGuide.dao.DiscTotalDao;
 import ru.mvk.videoGuide.dao.FilmDao;
 import ru.mvk.videoGuide.model.Disc;
+import ru.mvk.videoGuide.model.DiscTotal;
+
+import java.util.List;
 
 public class DiscViewService extends ViewServiceImpl<Disc> {
+  @NotNull
+  DiscTotalDao discTotalDao;
+
   public DiscViewService(@NotNull HibernateAdapter hibernateAdapter,
                          @NotNull Layout layout) {
     super(new ViewServiceDescriptor<>(new DiscDao(hibernateAdapter),
         prepareDiscViewInfo(), prepareDiscListViewInfo()), layout, "Диски");
     setDefaultOrder("number", true);
+    discTotalDao = new DiscTotalDao(hibernateAdapter);
+    setTotalSupplier(() -> {
+      return discTotalDao.list().get(0).getDisc();
+    });
   }
 
   @NotNull
@@ -40,7 +52,7 @@ public class DiscViewService extends ViewServiceImpl<Disc> {
 
   @NotNull
   private static ListViewInfo<Disc> prepareDiscListViewInfo() {
-    @NotNull ListViewInfo<Disc> listViewInfo = new ListViewInfoImpl<>(Disc.class, true);
+    @NotNull ListViewInfo<Disc> listViewInfo = new ListViewInfoImpl<>(Disc.class, false);
     listViewInfo.addColumnInfo("number", new NumColumnInfo("Диск", 8));
     listViewInfo.addColumnInfo("size", new FileSizeColumnInfo("Всего", 10));
     listViewInfo.addColumnInfo("filmsCount", new NumColumnInfo("Фильмов", 8));

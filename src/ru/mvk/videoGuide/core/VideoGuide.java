@@ -20,6 +20,7 @@ import ru.mvk.iluvatar.module.db.HibernateAdapterImpl;
 import ru.mvk.iluvatar.service.ViewService;
 import ru.mvk.iluvatar.properties.BundleStringSupplier;
 import ru.mvk.videoGuide.model.Disc;
+import ru.mvk.videoGuide.model.DiscTotal;
 import ru.mvk.videoGuide.model.Film;
 import ru.mvk.videoGuide.module.db.VideoGuideDbController;
 import ru.mvk.videoGuide.service.DiscViewService;
@@ -104,6 +105,7 @@ public class VideoGuide extends Application {
     configuration.setProperties(properties);
     configuration.addAnnotatedClass(Film.class);
     configuration.addAnnotatedClass(Disc.class);
+    configuration.addAnnotatedClass(DiscTotal.class);
     return configuration;
   }
 }

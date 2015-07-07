@@ -88,6 +88,22 @@ public final class Disc {
     return filmsSize;
   }
 
+  public void setFilmsCount(int filmsCount) {
+    this.filmsCount = filmsCount;
+  }
+
+  public void setFilmsFilesCount(int filmsFilesCount) {
+    this.filmsFilesCount = filmsFilesCount;
+  }
+
+  public void setFilmsLength(int filmsLength) {
+    this.filmsLength = filmsLength;
+  }
+
+  public void setFilmsSize(long filmsSize) {
+    this.filmsSize = filmsSize;
+  }
+
   public boolean equals(@NotNull Disc disc) {
     return (id == disc.id) && (number == disc.number) && (size == disc.size);
   }
