@@ -11,7 +11,7 @@ import ru.mvk.iluvatar.descriptor.ViewInfo;
 import ru.mvk.iluvatar.descriptor.ViewInfoImpl;
 import ru.mvk.iluvatar.descriptor.column.DurationColumnInfo;
 import ru.mvk.iluvatar.descriptor.column.FileSizeColumnInfo;
-import ru.mvk.iluvatar.descriptor.column.LowerStringColumnInfo;
+import ru.mvk.iluvatar.descriptor.column.NumColumnInfo;
 import ru.mvk.iluvatar.descriptor.column.StringColumnInfo;
 import ru.mvk.iluvatar.descriptor.field.NaturalFieldInfo;
 import ru.mvk.iluvatar.descriptor.field.TextFieldInfo;
@@ -44,12 +44,12 @@ public class FilmViewService extends ViewServiceImpl<Film> {
 
   @NotNull
   private static ListViewInfo<Film> prepareFilmListViewInfo() {
-    @NotNull ListViewInfo<Film> listViewInfo = new ListViewInfoImpl<>(Film.class);
-    listViewInfo.addColumnInfo("lowerName", new LowerStringColumnInfo("Название", 60));
+    @NotNull ListViewInfo<Film> listViewInfo = new ListViewInfoImpl<>(Film.class, false);
+    listViewInfo.addColumnInfo("lowerName", new StringColumnInfo("Название", 60));
     listViewInfo.addColumnInfo("length", new DurationColumnInfo("Длит.", 9));
     listViewInfo.addColumnInfo("size", new FileSizeColumnInfo("Размер", 9));
-    listViewInfo.addColumnInfo("disc", new StringColumnInfo("Диск", 7));
-    listViewInfo.addColumnInfo("filesCount", new StringColumnInfo("Файлов", 8));
+    listViewInfo.addColumnInfo("disc", new NumColumnInfo("Диск", 7));
+    listViewInfo.addColumnInfo("filesCount", new NumColumnInfo("Файлов", 8));
     listViewInfo.addColumnInfo("averageLength", new DurationColumnInfo("Ср. длит.", 9));
     listViewInfo.addColumnInfo("averageSize", new FileSizeColumnInfo("Ср. размер", 12));
     return listViewInfo;

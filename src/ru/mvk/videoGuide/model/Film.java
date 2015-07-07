@@ -5,6 +5,7 @@ package ru.mvk.videoGuide.model;
 
 import org.hibernate.annotations.Formula;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -82,7 +83,7 @@ public final class Film implements Serializable {
 
   public void setName(@NotNull String name) {
     this.name = name;
-    this.lowerName = name.toLowerCase().replace('ё','е');
+    this.lowerName = name.toLowerCase().replace('ё', 'е');
   }
 
   public int getId() {
@@ -114,20 +115,17 @@ public final class Film implements Serializable {
     return lowerName + name;
   }
 
+  public boolean equals(@NotNull Film film) {
+    return (disc == film.disc) && (filesCount == film.filesCount) &&
+               (id == film.id) && (length == film.length) &&
+               (size == film.size) && name.equals(film.name);
+
+  }
+
   @Override
-  public boolean equals(Object o) {
-    boolean result;
-    if (this == o) {
-      result = true;
-    } else if (o == null || getClass() != o.getClass()) {
-      result = false;
-    } else {
-      Film film = (Film) o;
-      result = (disc == film.disc) && (filesCount == film.filesCount) &&
-          (id == film.id) && (length == film.length) && (size == film.size) &&
-          name.equals(film.name);
-    }
-    return result;
+  public boolean equals(@Nullable Object o) {
+    return this == o || o != null && getClass() == o.getClass() &&
+                            this.equals((Film) o);
   }
 
   @Override

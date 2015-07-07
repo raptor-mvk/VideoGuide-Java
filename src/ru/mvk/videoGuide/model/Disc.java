@@ -5,6 +5,8 @@
 package ru.mvk.videoGuide.model;
 
 import org.hibernate.annotations.Formula;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.persistence.*;
 
@@ -28,15 +30,15 @@ public final class Disc {
   private int filmsCount;
 
   @Formula("(select case when sum(film.filesCount) is null then 0 else " +
-      "sum(film.filesCount) end from Film where film.disc=number)")
+               "sum(film.filesCount) end from Film where film.disc=number)")
   private int filmsFilesCount;
 
   @Formula("(select case when sum(film.length) is null then 0 else sum(film.length) " +
-      "end from Film where film.disc=number)")
+               "end from Film where film.disc=number)")
   private int filmsLength;
 
   @Formula("(select case when sum(film.size) is null then 0 else sum(film.size) end " +
-      "from Film where film.disc=number)")
+               "from Film where film.disc=number)")
   private long filmsSize;
 
   @Transient
@@ -86,18 +88,14 @@ public final class Disc {
     return filmsSize;
   }
 
+  public boolean equals(@NotNull Disc disc) {
+    return (id == disc.id) && (number == disc.number) && (size == disc.size);
+  }
+
   @Override
-  public boolean equals(Object o) {
-    boolean result;
-    if (this == o) {
-      result = true;
-    } else if (o == null || getClass() != o.getClass()) {
-      result = false;
-    } else {
-      Disc disc = (Disc) o;
-      result = (id == disc.id) && (number == disc.number) && (size == disc.size);
-    }
-    return result;
+  public boolean equals(@Nullable Object o) {
+    return this == o || o != null && getClass() == o.getClass() &&
+                            this.equals((Disc) o);
   }
 
   @Override

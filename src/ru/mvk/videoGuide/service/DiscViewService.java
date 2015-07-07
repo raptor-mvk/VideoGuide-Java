@@ -11,6 +11,7 @@ import ru.mvk.iluvatar.descriptor.ViewInfo;
 import ru.mvk.iluvatar.descriptor.ViewInfoImpl;
 import ru.mvk.iluvatar.descriptor.column.DurationColumnInfo;
 import ru.mvk.iluvatar.descriptor.column.FileSizeColumnInfo;
+import ru.mvk.iluvatar.descriptor.column.NumColumnInfo;
 import ru.mvk.iluvatar.descriptor.column.StringColumnInfo;
 import ru.mvk.iluvatar.descriptor.field.NaturalFieldInfo;
 import ru.mvk.iluvatar.module.db.HibernateAdapter;
@@ -39,11 +40,11 @@ public class DiscViewService extends ViewServiceImpl<Disc> {
 
   @NotNull
   private static ListViewInfo<Disc> prepareDiscListViewInfo() {
-    @NotNull ListViewInfo<Disc> listViewInfo = new ListViewInfoImpl<>(Disc.class);
-    listViewInfo.addColumnInfo("number", new StringColumnInfo("Диск", 8));
+    @NotNull ListViewInfo<Disc> listViewInfo = new ListViewInfoImpl<>(Disc.class, true);
+    listViewInfo.addColumnInfo("number", new NumColumnInfo("Диск", 8));
     listViewInfo.addColumnInfo("size", new FileSizeColumnInfo("Всего", 10));
-    listViewInfo.addColumnInfo("filmsCount", new StringColumnInfo("Фильмов", 8));
-    listViewInfo.addColumnInfo("filmsFilesCount", new StringColumnInfo("Файлов", 8));
+    listViewInfo.addColumnInfo("filmsCount", new NumColumnInfo("Фильмов", 8));
+    listViewInfo.addColumnInfo("filmsFilesCount", new NumColumnInfo("Файлов", 8));
     listViewInfo.addColumnInfo("filmsLength", new DurationColumnInfo("Длит.", 10));
     listViewInfo.addColumnInfo("filmsSize", new FileSizeColumnInfo("Размер", 10));
     listViewInfo.addColumnInfo("freeSize", new FileSizeColumnInfo("Свободно", 10));
