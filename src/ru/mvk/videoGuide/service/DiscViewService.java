@@ -52,7 +52,9 @@ public class DiscViewService extends ViewServiceImpl<Disc> {
 
   @NotNull
   private static ListViewInfo<Disc> prepareDiscListViewInfo() {
-    @NotNull ListViewInfo<Disc> listViewInfo = new ListViewInfoImpl<>(Disc.class, false);
+    @NotNull ListViewInfo<Disc> listViewInfo = new ListViewInfoImpl<>(Disc.class);
+    listViewInfo.setTotalRow(true);
+    listViewInfo.setRemoveAllowed(false);
     listViewInfo.addColumnInfo("number", new NumColumnInfo("Диск", 8));
     listViewInfo.addColumnInfo("size", new FileSizeColumnInfo("Всего", 10));
     listViewInfo.addColumnInfo("filmsCount", new NumColumnInfo("Фильмов", 8));

@@ -44,7 +44,7 @@ public class FilmViewService extends ViewServiceImpl<Film> {
 
   @NotNull
   private static ListViewInfo<Film> prepareFilmListViewInfo() {
-    @NotNull ListViewInfo<Film> listViewInfo = new ListViewInfoImpl<>(Film.class, false);
+    @NotNull ListViewInfo<Film> listViewInfo = new ListViewInfoImpl<>(Film.class);
     listViewInfo.addColumnInfo("lowerName", new StringColumnInfo("Название", 60));
     listViewInfo.addColumnInfo("length", new DurationColumnInfo("Длит.", 9));
     listViewInfo.addColumnInfo("size", new FileSizeColumnInfo("Размер", 9));
