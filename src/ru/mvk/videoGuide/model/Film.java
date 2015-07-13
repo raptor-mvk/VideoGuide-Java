@@ -35,7 +35,11 @@ public final class Film implements Serializable {
   private long size;
 
   @Column(name = "disc", nullable = false)
-  private byte disc;
+  private int disc;
+
+  @NotNull
+  @Formula("(select disc.name from disc where disc.rowid=disc)")
+  private String discName;
 
   @Column(name = "filesCount", nullable = false)
   private short filesCount;
@@ -49,14 +53,16 @@ public final class Film implements Serializable {
   public Film() {
     name = "";
     lowerName = "";
+    discName = "";
     filesCount = 1;
   }
 
-  public byte getDisc() {
+  @NotNull
+  public Integer getDisc() {
     return disc;
   }
 
-  public void setDisc(byte disc) {
+  public void setDisc(@NotNull Integer disc) {
     this.disc = disc;
   }
 
@@ -74,6 +80,15 @@ public final class Film implements Serializable {
 
   public void setLength(int length) {
     this.length = length;
+  }
+
+  @NotNull
+  public String getDiscName() {
+    return discName;
+  }
+
+  public void setDiscName(@NotNull String discName) {
+    this.discName = discName;
   }
 
   @NotNull
@@ -109,6 +124,8 @@ public final class Film implements Serializable {
   public long getAverageSize() {
     return averageSize;
   }
+
+
 
   @NotNull
   public String getLowerName() {

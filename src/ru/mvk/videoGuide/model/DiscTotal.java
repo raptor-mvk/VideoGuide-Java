@@ -89,7 +89,7 @@ public final class DiscTotal {
   public Disc getDisc() {
     @NotNull Disc totalDisc = new Disc();
     totalDisc.setId(0);
-    totalDisc.setNumber((byte) 0);
+    totalDisc.setName("Всего");
     totalDisc.setSize(size);
     totalDisc.setFilmsCount(filmsCount);
     totalDisc.setFilmsFilesCount(filmsFilesCount);

@@ -7,6 +7,7 @@ package ru.mvk.videoGuide.model;
 import org.hibernate.annotations.Formula;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ru.mvk.iluvatar.descriptor.field.RefAble;
 
 import javax.persistence.*;
 
@@ -14,50 +15,57 @@ import static javax.persistence.GenerationType.IDENTITY;
 
 @Entity
 @Table(name = "disc")
-public final class Disc {
+public final class Disc implements RefAble<Integer> {
   @Id
   @GeneratedValue(strategy = IDENTITY)
   @Column(name = "rowid", nullable = false, unique = true)
   private int id;
 
-  @Column(name = "number", nullable = false)
-  private byte number;
+  @NotNull
+  @Column(name = "name", nullable = false)
+  private String name;
 
   @Column(name = "size", nullable = false)
   private long size;
 
-  @Formula("(select count(*) from Film where film.disc=number)")
+  @Formula("(select count(*) from Film where film.disc=rowid)")
   private int filmsCount;
 
   @Formula("(select case when sum(film.filesCount) is null then 0 else " +
-               "sum(film.filesCount) end from Film where film.disc=number)")
+               "sum(film.filesCount) end from Film where film.disc=rowid)")
   private int filmsFilesCount;
 
   @Formula("(select case when sum(film.length) is null then 0 else sum(film.length) " +
-               "end from Film where film.disc=number)")
+               "end from Film where film.disc=rowid)")
   private int filmsLength;
 
   @Formula("(select case when sum(film.size) is null then 0 else sum(film.size) end " +
-               "from Film where film.disc=number)")
+               "from Film where film.disc=rowid)")
   private long filmsSize;
 
   @Transient
   private long freeSize;
 
-  public int getId() {
+  public Disc() {
+    name = "";
+  }
+
+  @NotNull
+  public Integer getId() {
     return id;
   }
 
-  public void setId(int id) {
+  public void setId(@NotNull Integer id) {
     this.id = id;
   }
 
-  public byte getNumber() {
-    return number;
+  @NotNull
+  public String getName() {
+    return name;
   }
 
-  public void setNumber(byte number) {
-    this.number = number;
+  public void setName(@NotNull String name) {
+    this.name = name;
   }
 
   public void setSize(long size) {
@@ -105,7 +113,7 @@ public final class Disc {
   }
 
   public boolean equals(@NotNull Disc disc) {
-    return (id == disc.id) && (number == disc.number) && (size == disc.size);
+    return (id == disc.id) && name.equals(disc.name) && (size == disc.size);
   }
 
   @Override
@@ -116,7 +124,12 @@ public final class Disc {
 
   @Override
   public int hashCode() {
-    int result = 31 * id + (int) number;
+    int result = 31 * id + name.hashCode();
     return 31 * result + (int) size;
+  }
+
+  @Override
+  public String toString() {
+    return name;
   }
 }

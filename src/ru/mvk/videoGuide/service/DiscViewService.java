@@ -15,6 +15,7 @@ import ru.mvk.iluvatar.descriptor.column.FileSizeColumnInfo;
 import ru.mvk.iluvatar.descriptor.column.NumColumnInfo;
 import ru.mvk.iluvatar.descriptor.column.StringColumnInfo;
 import ru.mvk.iluvatar.descriptor.field.NaturalFieldInfo;
+import ru.mvk.iluvatar.descriptor.field.TextFieldInfo;
 import ru.mvk.iluvatar.module.db.HibernateAdapter;
 import ru.mvk.iluvatar.service.ViewServiceDescriptor;
 import ru.mvk.iluvatar.service.ViewServiceImpl;
@@ -35,17 +36,15 @@ public class DiscViewService extends ViewServiceImpl<Disc> {
                          @NotNull Layout layout) {
     super(new ViewServiceDescriptor<>(new DiscDao(hibernateAdapter),
         prepareDiscViewInfo(), prepareDiscListViewInfo()), layout, "Диски");
-    setDefaultOrder("number", true);
+    setDefaultOrder("name", true);
     discTotalDao = new DiscTotalDao(hibernateAdapter);
-    setTotalSupplier(() -> {
-      return discTotalDao.list().get(0).getDisc();
-    });
+    setTotalSupplier(() -> discTotalDao.list().get(0).getDisc());
   }
 
   @NotNull
   private static ViewInfo<Disc> prepareDiscViewInfo() {
     @NotNull ViewInfo<Disc> viewInfo = new ViewInfoImpl<>(Disc.class);
-    viewInfo.addFieldInfo("number", new NaturalFieldInfo<>(Byte.class, "Диск", 2));
+    viewInfo.addFieldInfo("name", new TextFieldInfo("Диск", 1));
     viewInfo.addFieldInfo("size", new NaturalFieldInfo<>(Long.class, "Размер", 13));
     return viewInfo;
   }
@@ -53,9 +52,9 @@ public class DiscViewService extends ViewServiceImpl<Disc> {
   @NotNull
   private static ListViewInfo<Disc> prepareDiscListViewInfo() {
     @NotNull ListViewInfo<Disc> listViewInfo = new ListViewInfoImpl<>(Disc.class);
-    listViewInfo.setTotalRow(true);
-    listViewInfo.setRemoveAllowed(false);
-    listViewInfo.addColumnInfo("number", new NumColumnInfo("Диск", 8));
+    listViewInfo.showTotalRow();
+    listViewInfo.disableRemove();
+    listViewInfo.addColumnInfo("name", new NumColumnInfo("Диск", 8));
     listViewInfo.addColumnInfo("size", new FileSizeColumnInfo("Всего", 10));
     listViewInfo.addColumnInfo("filmsCount", new NumColumnInfo("Фильмов", 8));
     listViewInfo.addColumnInfo("filmsFilesCount", new NumColumnInfo("Файлов", 8));
