@@ -31,9 +31,8 @@ public class FilmViewService extends ViewServiceImpl<Film> {
   public FilmViewService(@NotNull HibernateAdapter hibernateAdapter,
                          @NotNull Layout layout) {
     super(new ViewServiceDescriptor<>(new FilmDao(hibernateAdapter),
-                                         prepareFilmViewInfo(hibernateAdapter), prepareFilmListViewInfo()),
-             layout, "Фильмы");
-    setDefaultOrder("lowerName", true);
+                                         prepareFilmViewInfo(hibernateAdapter),
+                                         prepareFilmListViewInfo()), layout, "Фильмы");
   }
 
   @NotNull

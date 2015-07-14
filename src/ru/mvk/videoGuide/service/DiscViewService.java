@@ -5,7 +5,6 @@
 package ru.mvk.videoGuide.service;
 
 import org.jetbrains.annotations.NotNull;
-import ru.mvk.iluvatar.dao.Dao;
 import ru.mvk.iluvatar.descriptor.ListViewInfo;
 import ru.mvk.iluvatar.descriptor.ListViewInfoImpl;
 import ru.mvk.iluvatar.descriptor.ViewInfo;
@@ -13,7 +12,6 @@ import ru.mvk.iluvatar.descriptor.ViewInfoImpl;
 import ru.mvk.iluvatar.descriptor.column.DurationColumnInfo;
 import ru.mvk.iluvatar.descriptor.column.FileSizeColumnInfo;
 import ru.mvk.iluvatar.descriptor.column.NumColumnInfo;
-import ru.mvk.iluvatar.descriptor.column.StringColumnInfo;
 import ru.mvk.iluvatar.descriptor.field.NaturalFieldInfo;
 import ru.mvk.iluvatar.descriptor.field.TextFieldInfo;
 import ru.mvk.iluvatar.module.db.HibernateAdapter;
@@ -22,11 +20,7 @@ import ru.mvk.iluvatar.service.ViewServiceImpl;
 import ru.mvk.iluvatar.view.Layout;
 import ru.mvk.videoGuide.dao.DiscDao;
 import ru.mvk.videoGuide.dao.DiscTotalDao;
-import ru.mvk.videoGuide.dao.FilmDao;
 import ru.mvk.videoGuide.model.Disc;
-import ru.mvk.videoGuide.model.DiscTotal;
-
-import java.util.List;
 
 public class DiscViewService extends ViewServiceImpl<Disc> {
   @NotNull
@@ -35,8 +29,8 @@ public class DiscViewService extends ViewServiceImpl<Disc> {
   public DiscViewService(@NotNull HibernateAdapter hibernateAdapter,
                          @NotNull Layout layout) {
     super(new ViewServiceDescriptor<>(new DiscDao(hibernateAdapter),
-        prepareDiscViewInfo(), prepareDiscListViewInfo()), layout, "Диски");
-    setDefaultOrder("name", true);
+                                         prepareDiscViewInfo(),
+                                         prepareDiscListViewInfo()), layout, "Диски");
     discTotalDao = new DiscTotalDao(hibernateAdapter);
     setTotalSupplier(() -> discTotalDao.list().get(0).getDisc());
   }

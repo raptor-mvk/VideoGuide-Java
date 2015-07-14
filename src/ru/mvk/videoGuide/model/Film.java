@@ -6,6 +6,7 @@ package ru.mvk.videoGuide.model;
 import org.hibernate.annotations.Formula;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ru.mvk.iluvatar.utils.IluvatarUtils;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -98,7 +99,7 @@ public final class Film implements Serializable {
 
   public void setName(@NotNull String name) {
     this.name = name;
-    this.lowerName = name.toLowerCase().replace('ё', 'е');
+    this.lowerName = IluvatarUtils.normalizeString(name);
   }
 
   public int getId() {
@@ -125,8 +126,6 @@ public final class Film implements Serializable {
     return averageSize;
   }
 
-
-
   @NotNull
   public String getLowerName() {
     return lowerName + name;
@@ -152,5 +151,10 @@ public final class Film implements Serializable {
     result = 31 * result + (int) (size ^ (size >>> 32));
     result = 31 * result + (int) disc;
     return 31 * result + (int) filesCount;
+  }
+
+  @Override
+  public String toString() {
+    return name;
   }
 }
