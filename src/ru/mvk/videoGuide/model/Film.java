@@ -55,6 +55,7 @@ public final class Film implements Serializable {
     name = "";
     lowerName = "";
     discName = "";
+    disc = 1;
     filesCount = 1;
   }
 
