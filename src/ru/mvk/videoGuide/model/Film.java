@@ -38,7 +38,7 @@ public final class Film implements Serializable {
   @Column(name = "disc", nullable = false)
   private int disc;
 
-  @NotNull
+  @Nullable
   @Formula("(select disc.name from disc where disc.rowid=disc)")
   private String discName;
 
@@ -55,7 +55,6 @@ public final class Film implements Serializable {
     name = "";
     lowerName = "";
     discName = "";
-    disc = 1;
     filesCount = 1;
   }
 
@@ -86,7 +85,7 @@ public final class Film implements Serializable {
 
   @NotNull
   public String getDiscName() {
-    return discName;
+    return discName == null ? "" : discName;
   }
 
   public void setDiscName(@NotNull String discName) {
