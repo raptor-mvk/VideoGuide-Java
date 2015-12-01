@@ -12,6 +12,7 @@ import ru.mvk.iluvatar.descriptor.ViewInfoImpl;
 import ru.mvk.iluvatar.descriptor.column.DurationColumnInfo;
 import ru.mvk.iluvatar.descriptor.column.FileSizeColumnInfo;
 import ru.mvk.iluvatar.descriptor.column.NumColumnInfo;
+import ru.mvk.iluvatar.descriptor.column.StringColumnInfo;
 import ru.mvk.iluvatar.descriptor.field.NaturalFieldInfo;
 import ru.mvk.iluvatar.descriptor.field.TextFieldInfo;
 import ru.mvk.iluvatar.module.db.HibernateAdapter;
@@ -53,8 +54,9 @@ public class DiscViewService extends ViewServiceImpl<Disc> {
     listViewInfo.addColumnInfo("filmsCount", new NumColumnInfo("Фильмов", 8));
     listViewInfo.addColumnInfo("filmsFilesCount", new NumColumnInfo("Файлов", 8));
     listViewInfo.addColumnInfo("filmsLength", new DurationColumnInfo("Длит.", 10));
-    listViewInfo.addColumnInfo("filmsSize", new FileSizeColumnInfo("Размер", 10));
+    listViewInfo.addColumnInfo("filmsSize", new FileSizeColumnInfo("Занято", 10));
     listViewInfo.addColumnInfo("freeSize", new FileSizeColumnInfo("Свободно", 10));
+    listViewInfo.addColumnInfo("usedRatio", new NumColumnInfo("Занято, %", 8));
     return listViewInfo;
   }
 
