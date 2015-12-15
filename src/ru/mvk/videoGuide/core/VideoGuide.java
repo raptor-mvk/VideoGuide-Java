@@ -47,7 +47,7 @@ public class VideoGuide extends Application {
 			new BundleStringSupplier("VideoGuide");
 
 	public VideoGuide() {
-		layout = new JFXTabViewWindowLayout(820, 400);
+		layout = new JFXTabViewWindowLayout(825, 400);
 		@NotNull Locale ruLocale = new Locale("RU");
 		stringSupplier.registerLocale(ruLocale);
 		layout.setStringSupplier(stringSupplier);
@@ -72,7 +72,6 @@ public class VideoGuide extends Application {
 	public void start(@NotNull Stage primaryStage) throws Exception {
 		filmViewService.showListView();
 		layout.setStage(primaryStage);
-		layout.show(960, 460);
 	}
 
 	@Override

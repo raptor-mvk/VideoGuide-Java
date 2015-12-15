@@ -39,7 +39,7 @@ public class FilmViewService extends ViewServiceImpl<Film> {
   private static ViewInfo<Film> prepareFilmViewInfo(@NotNull
                                                     HibernateAdapter hibernateAdapter) {
     @NotNull ViewInfo<Film> viewInfo = new ViewInfoImpl<>(Film.class);
-    viewInfo.addFieldInfo("name", new TextFieldInfo("Название", 80));
+    viewInfo.addFieldInfo("name", new TextFieldInfo("Название", 85));
     viewInfo.addFieldInfo("length",
                              new NaturalFieldInfo<>(Integer.class, "Длительность", 6));
     viewInfo.addFieldInfo("size", new NaturalFieldInfo<>(Long.class, "Размер", 13));
@@ -53,8 +53,8 @@ public class FilmViewService extends ViewServiceImpl<Film> {
   @NotNull
   private static ListViewInfo<Film> prepareFilmListViewInfo() {
     @NotNull ListViewInfo<Film> listViewInfo = new ListViewInfoImpl<>(Film.class);
-    listViewInfo.addColumnInfo("lowerName", new StringColumnInfo("Название", 60));
-    listViewInfo.addColumnInfo("length", new DurationColumnInfo("Длит.", 9));
+    listViewInfo.addColumnInfo("lowerName", new StringColumnInfo("Название", 65));
+    listViewInfo.addColumnInfo("length", new DurationColumnInfo("Длит.", 8));
     listViewInfo.addColumnInfo("size", new FileSizeColumnInfo("Размер", 9));
     listViewInfo.addColumnInfo("discName", new NumColumnInfo("Диск", 7));
     listViewInfo.addColumnInfo("filesCount", new NumColumnInfo("Файлов", 8));
